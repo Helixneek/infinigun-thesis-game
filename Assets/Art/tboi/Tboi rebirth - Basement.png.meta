@@ -1,0 +1,355 @@
+fileFormatVersion: 2
+guid: 66a98c7679d4e6744a01fd383eb7b007
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6975579388400257078
+    second: Tboi rebirth - Basement_0
+  - first:
+      213: 5933169222710680647
+    second: Tboi rebirth - Basement_1
+  - first:
+      213: -6419827328891581339
+    second: Tboi rebirth - Basement_2
+  - first:
+      213: -8162978624323692536
+    second: Tboi rebirth - Basement_3
+  - first:
+      213: -2331505714997608363
+    second: Tboi rebirth - Basement_4
+  - first:
+      213: 4492610708017100632
+    second: Tboi rebirth - Basement_5
+  - first:
+      213: 4463458545434782142
+    second: Tboi rebirth - Basement_6
+  - first:
+      213: 5540995642732862827
+    second: Tboi rebirth - Basement_7
+  - first:
+      213: 4099963422703149329
+    second: Tboi rebirth - Basement_8
+  - first:
+      213: -3837572541977155419
+    second: Tboi rebirth - Basement_9
+  - first:
+      213: -1393538907170737260
+    second: Tboi rebirth - Basement_10
+  - first:
+      213: 4771953893140341243
+    second: Tboi rebirth - Basement_11
+  - first:
+      213: -5171046079941965518
+    second: Tboi rebirth - Basement_12
+  - first:
+      213: -750692379348108424
+    second: Tboi rebirth - Basement_13
+  - first:
+      213: 7100475218481797744
+    second: Tboi rebirth - Basement_14
+  - first:
+      213: -7506347314294848334
+    second: Tboi rebirth - Basement_15
+  - first:
+      213: -5008069376879506171
+    second: Tboi rebirth - Basement_16
+  - first:
+      213: 6219493032598489310
+    second: Tboi rebirth - Basement_17
+  - first:
+      213: -6672892303855971221
+    second: Tboi rebirth - Basement_18
+  - first:
+      213: -6885772191034998090
+    second: Tboi rebirth - Basement_19
+  - first:
+      213: 4358503246749595771
+    second: Tboi rebirth - Basement_20
+  - first:
+      213: 7204681664607069213
+    second: Tboi rebirth - Basement_21
+  - first:
+      213: 8878152846891410715
+    second: Tboi rebirth - Basement_22
+  - first:
+      213: 3399573579352312567
+    second: Tboi rebirth - Basement_23
+  - first:
+      213: 4367780824915773714
+    second: Tboi rebirth - Basement_24
+  - first:
+      213: -879965741485024447
+    second: Tboi rebirth - Basement_25
+  - first:
+      213: -4683744379149147721
+    second: Tboi rebirth - Basement_26
+  - first:
+      213: 1137248689235310459
+    second: Tboi rebirth - Basement_27
+  - first:
+      213: 8301543178535584390
+    second: Tboi rebirth - Basement_28
+  - first:
+      213: 6638083817690610667
+    second: Tboi rebirth - Basement_29
+  - first:
+      213: -635643312755131852
+    second: Tboi rebirth - Basement_30
+  - first:
+      213: 3337379131212628057
+    second: Tboi rebirth - Basement_31
+  - first:
+      213: -3332376342973818513
+    second: Tboi rebirth - Basement_32
+  - first:
+      213: 7159517569760097527
+    second: Tboi rebirth - Basement_33
+  - first:
+      213: -7770908827315469085
+    second: Tboi rebirth - Basement_34
+  - first:
+      213: -7653417616710804610
+    second: Tboi rebirth - Basement_35
+  - first:
+      213: -7917841126294471733
+    second: Tboi rebirth - Basement_36
+  - first:
+      213: -7753152003540460459
+    second: Tboi rebirth - Basement_37
+  - first:
+      213: 407454971990112892
+    second: Tboi rebirth - Basement_38
+  - first:
+      213: 1187446332853603515
+    second: Tboi rebirth - Basement_39
+  - first:
+      213: 636445841266457483
+    second: Tboi rebirth - Basement_40
+  - first:
+      213: 1265438250730694500
+    second: Tboi rebirth - Basement_41
+  - first:
+      213: -613628231194062774
+    second: Tboi rebirth - Basement_42
+  - first:
+      213: 1767721035304262776
+    second: Tboi rebirth - Basement_43
+  - first:
+      213: 555689292760046978
+    second: Tboi rebirth - Basement_44
+  - first:
+      213: -8200617882878145497
+    second: Tboi rebirth - Basement_45
+  - first:
+      213: 1518471236175535445
+    second: Tboi rebirth - Basement_46
+  - first:
+      213: 6117267589874940995
+    second: Tboi rebirth - Basement_47
+  - first:
+      213: -1323510247919480451
+    second: Tboi rebirth - Basement_48
+  - first:
+      213: -3596035191359059557
+    second: Tboi rebirth - Basement_49
+  - first:
+      213: -5655204116148810805
+    second: Tboi rebirth - Basement_50
+  - first:
+      213: -7506565614171000059
+    second: Tboi rebirth - Basement_51
+  - first:
+      213: -3766932691526640964
+    second: Tboi rebirth - Basement_52
+  - first:
+      213: -4562625775506190577
+    second: Tboi rebirth - Basement_53
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Tboi rebirth - Basement_0
+      rect:
+        serializedVersion: 2
+        x: 484
+        y: 158
+        width: 130
+        height: 182
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac7bdd32183c13f90800000000000000
+      internalID: -6975579388400257078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tboi rebirth - Basement_52
+      rect:
+        serializedVersion: 2
+        x: 613
+        y: 158
+        width: 130
+        height: 182
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8062ff9767c08b649a249ae154dfe0a4
+      internalID: -1061842499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tboi rebirth - Basement_53
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 312
+        width: 234
+        height: 156
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 220d9634b87bbaa449b0a49b08177377
+      internalID: -1411529131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 2c64fd483b64417479736ed3ecd10fe9
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      Tboi rebirth - Basement_52: -1061842499
+      Tboi rebirth - Basement_53: -1411529131
+      Tboi rebirth - Basement_54: 1791027918
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

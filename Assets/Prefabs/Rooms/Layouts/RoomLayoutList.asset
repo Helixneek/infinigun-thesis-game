@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 439e69c9a1c3d0c4e93c8d209f673bd6, type: 3}
+  m_Name: RoomLayoutList
+  m_EditorClassIdentifier: 
+  emptyRoomLayouts:
+  - {fileID: 707821585043276988, guid: 5324a296d21c8814fb08fa096132e892, type: 3}
+  - {fileID: 4479268077992469845, guid: 512dc38b237980b4c904d4b3469c8690, type: 3}
+  - {fileID: 7405372131929231124, guid: 1f10e6cf18d195248ad7b221d55b3132, type: 3}
+  enemyRoomLayouts:
+  - {fileID: 7878503163044133791, guid: 90d4555b4567b474ea85aaecb45bee84, type: 3}
+  - {fileID: 8859346890994853234, guid: aa1826367ec53394293113b3e6e44378, type: 3}
+  - {fileID: 732414187740456112, guid: 2e552e0e40e9e654ea74d0f3251e9772, type: 3}
+  treasureRoomLayouts:
+  - {fileID: 7809821315698143843, guid: 7830495fb6d55e4468140116a47d6970, type: 3}
+  puzzleRoomLayouts:
+  - {fileID: 8618227115362347201, guid: 526f02fe5dc6ed74c9b372ba45a95fbb, type: 3}
+  trapRoomLayouts:
+  - {fileID: 508195870872658850, guid: 51943a89a09db094d9e1a1cc6504a254, type: 3}
+  shopRoomLayouts:
+  - {fileID: 4636473236227976204, guid: a5bc05c4f90464c498cc617f8866f330, type: 3}
+  bossRoomLayouts:
+  - {fileID: 5702657816213476102, guid: 38b5b0de828162548b5f5baabbee6406, type: 3}

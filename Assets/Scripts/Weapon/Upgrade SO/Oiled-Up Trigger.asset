@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeName: Oiled-Up Trigger
   upgradeType: 1
-  flavorText: Easier trigger-pulling
+  flavorText: Fire rate up
   sprite: {fileID: 21300000, guid: c929c0f330f699d48a99010036c12b09, type: 3}
   isPercentage: 0
-  upgradeValue: 0.2
+  upgradeValue: 0.05
   upgradeTier: 1

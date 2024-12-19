@@ -23,8 +23,12 @@ public class PlayerUpgradeInventory : MonoBehaviour
     public int maxAmmoChange;
     public float reloadSpeedChange;
 
+    private PlayerGun _gun;
+
     private void Start()
     {
+        _gun = GetComponent<PlayerGun>();
+
         CalculateStats();
     }
 
@@ -33,15 +37,24 @@ public class PlayerUpgradeInventory : MonoBehaviour
         upgrades.Add(upgrade);
 
         CalculateStats();
+
+        _gun.UpdateGunStats();
+        _gun.UpdateAmmoText();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent<ItemPedestal>(out ItemPedestal pedestal))
         {
-            AddUpgrade(pedestal.GiveUpgrade());
+            GunUpgrade upgrade = pedestal.GiveUpgrade();
 
-            StartCoroutine(HandleUI(pedestal.GiveUpgrade()));
+            if(upgrade != null)
+            {
+                AddUpgrade(upgrade);
+
+                StartCoroutine(HandleUI(upgrade));
+            }
+            
         }
     }
 
@@ -52,6 +65,9 @@ public class PlayerUpgradeInventory : MonoBehaviour
         StartCoroutine(HandleUI(upgrade));
 
         CalculateStats();
+
+        _gun.UpdateGunStats();
+        _gun.UpdateAmmoText();
     }
 
     private IEnumerator HandleUI(GunUpgrade upgrade)

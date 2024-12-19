@@ -1,14 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class WFC_Drawer : MonoBehaviour
 {
-    [Header("Managers")]
-    [SerializeField] private RoomContentHandler roomContentHandler;
-
     [Header("Objects")]
+    [SerializeField] private LevelConfigSO levelConfig;
     [SerializeField] private RoomCreator roomPrefab;
     [SerializeField] private DoorTriggerInteraction doorPrefab;
     [SerializeField] private Vector2[] doorSpawnPositions;
@@ -26,8 +23,35 @@ public class WFC_Drawer : MonoBehaviour
 
     private int _totalRoomIndex = 0;
 
+    // Difficulty parameters
+    private int _maxEasyRooms = 0;
+    private int _maxMediumRooms = 0;
+
+    private int _easyRoomCount = 0;
+    private int _mediumRoomCount = 0;
+
+    private void Start()
+    {
+        if(levelConfig.easyRooms)
+        {
+            _maxEasyRooms = levelConfig.easyRoomBreakoff;
+        }
+
+        if(levelConfig.mediumRooms)
+        {
+            _maxMediumRooms = levelConfig.mediumRoomBreakoff;
+        }
+    }
+
     public void StartDrawer(int dimension, List<WFC_Cell> grid, WFC_Cell fcell, Transform gridparent)
     {
+
+        if (dimension <= 0 || grid == null || grid.Count < dimension * dimension)
+        {
+            Debug.LogError("Invalid StartDrawer parameters. Check dimension and grid!");
+            return;
+        }
+
         // Get the data from that function
         _dimension = dimension;
         _grid = grid;
@@ -74,6 +98,30 @@ public class WFC_Drawer : MonoBehaviour
                     // and the increment it
                     obj.roomID = _totalRoomIndex++;
 
+                    // Set the difficulty if the room is an enemy room
+                    if (cell.options[0] == (int)RoomType.Enemy)
+                    {
+                        if(levelConfig.easyRooms && _easyRoomCount <= _maxEasyRooms)
+                        {
+                            obj.EnemyDifficulty = EnemyDifficulty.Easy;
+                            _easyRoomCount++;
+                        }
+                        else if(levelConfig.mediumRooms && _mediumRoomCount <= _maxMediumRooms)
+                        {
+                            obj.EnemyDifficulty = EnemyDifficulty.Medium;
+                            _mediumRoomCount++;
+                        }
+                        else if(levelConfig.hardRooms)
+                        {
+                            obj.EnemyDifficulty = EnemyDifficulty.Hard;
+                        }
+                        else
+                        {
+                            obj.EnemyDifficulty = EnemyDifficulty.Easy;
+                            _easyRoomCount++;
+                        }
+                    }
+
                     // Add room object to the list
                     _roomObjects.Add(obj);
 
@@ -89,9 +137,13 @@ public class WFC_Drawer : MonoBehaviour
 
                         _firstCell = cell;
                     }
+                    else if(obj.roomType == RoomType.Enemy)
+                    {
+                        obj.gameObject.name = $"{obj.EnemyDifficulty} {obj.roomType} Room {i} {j}";
+                    }
                     else
                     {
-                        obj.gameObject.name = $"{obj.roomType} Room {i} {j}";
+                        obj.gameObject.name = $" {obj.roomType} Room {i} {j}";
                     }
 
                     obj.gameObject.transform.parent = _gridParent;
@@ -153,8 +205,15 @@ public class WFC_Drawer : MonoBehaviour
             {
                 WFC_Cell cell = _grid[i + j * _dimension];
 
+                int index = i + j * _dimension;
+
+                if (index >= _grid.Count || index < 0)
+                {
+                    Debug.LogError($"Index out of range: {index}, Grid Size: {_grid.Count}, i: {i}, j: {j}");
+                }
+
                 // Make sure that wall rooms are skipped
-                if(cell != null && cell.collapsed && cell.options[0] != (int)RoomType.Wall)
+                if (cell != null && cell.collapsed && cell.options[0] != (int)RoomType.Wall)
                 {
                     // Check each direction
                     // UP
@@ -232,12 +291,6 @@ public class WFC_Drawer : MonoBehaviour
             && _grid[x + (y + 1) * _dimension].options[0] != (int)RoomType.Wall
             && _roomObjects[x + (y + 1) * _dimension].roomID >= 0)
         {
-            //// Set the current room ID of the door as this room's ID
-            //_roomObjects[x + y * _dimension].doorObjects[0].currentRoomID = _roomObjects[x + y * _dimension].roomID;
-
-            //// Set the next room ID of the door as the adjacent room's ID
-            //_roomObjects[x + (y + 1) * _dimension].doorObjects[0].nextRoomID = _roomObjects[x + (y + 1) * _dimension].roomID;
-
             // Add the current room ID and next room ID to the doors
             _roomObjects[x + y * _dimension].SetDoorIDs(
                 _roomObjects[x + y * _dimension].roomID, 

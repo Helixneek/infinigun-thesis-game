@@ -11070,8 +11070,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5389319722240128831}
   - component: {fileID: 7882490029570301359}
-  - component: {fileID: 1351684256213805724}
   - component: {fileID: 2666364535051876388}
+  - component: {fileID: 3171806351250222321}
+  - component: {fileID: 1351684256213805724}
   m_Layer: 7
   m_Name: Room
   m_TagString: Room
@@ -11115,7 +11116,35 @@ MonoBehaviour:
   roomID: -1
   roomType: 2
   isFirst: 0
+  EnemyDifficulty: 0
   doorObjects: []
+  enemies: []
+  boss: {fileID: 0}
+--- !u!114 &2666364535051876388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7640881260127354237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4085b53fb01ad64488b29b9d9263939b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  virtualCamera: {fileID: 3691094200774808465}
+--- !u!114 &3171806351250222321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7640881260127354237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68207e7320e360c4391bc761192e63f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!60 &1351684256213805724
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -11162,24 +11191,11 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 16.02185, y: 9.008973}
-      - {x: -15.966848, y: 9.008973}
-      - {x: -16.021847, y: -9.008973}
-      - {x: 16.021847, y: -9.008973}
+    - - {x: 16.02185, y: 9.250897}
+      - {x: -15.966848, y: 9.250897}
+      - {x: -16.021847, y: -8.758973}
+      - {x: 16.021847, y: -8.758973}
   m_UseDelaunayMesh: 0
---- !u!114 &2666364535051876388
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7640881260127354237}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4085b53fb01ad64488b29b9d9263939b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  virtualCamera: {fileID: 3691094200774808465}
 --- !u!1 &8035076109304976281
 GameObject:
   m_ObjectHideFlags: 0

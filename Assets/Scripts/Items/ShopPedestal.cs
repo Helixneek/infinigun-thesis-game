@@ -13,6 +13,8 @@ public class ShopPedestal : TriggerInteractionBase
     private PlayerUpgradeInventory _inventory;
     private PlayerWallet _wallet;
 
+    private bool isBought = false;
+
     private void Start()
     {
         AssignRandomItem();
@@ -27,11 +29,13 @@ public class ShopPedestal : TriggerInteractionBase
 
     public override void Interact()
     {
-        itemSprite.sprite = null;
-
-        if(_wallet.CheckCoins(_price))
+        if(!isBought && _wallet.CheckCoins(_price))
         {
             Debug.Log("You have enough money!");
+
+            itemSprite.sprite = null;
+
+            isBought = true;
 
             _inventory.AddUpgradeExternal(_upgrade);
 
@@ -39,7 +43,7 @@ public class ShopPedestal : TriggerInteractionBase
         }
         else
         {
-            Debug.Log("Not enough money!");
+            Debug.Log("Cannot be bought");
         }
     }
 
@@ -57,11 +61,11 @@ public class ShopPedestal : TriggerInteractionBase
         switch(_upgrade.upgradeTier)
         {
             case 0:
-                _price = 7;
+                _price = 15;
                 break;
 
             case 1:
-                _price = 15;
+                _price = 30;
                 break;
         }
     }

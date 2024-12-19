@@ -1,12 +1,22 @@
 using UnityEngine;
 
+public enum EnemyDifficulty
+{
+    Easy,
+    Medium,
+    Hard
+}
+
 public class RoomCreator : MonoBehaviour
 {
     public int roomID = -1;
     public RoomType roomType;
     public bool isFirst = false;
+    public EnemyDifficulty EnemyDifficulty = EnemyDifficulty.Easy;
 
     public DoorTriggerInteraction[] doorObjects;
+    public Enemy[] enemies;
+    public Boss boss;
 
     private LayoutManager _layoutManager;
     private RoomLayoutList _layoutList;
@@ -19,6 +29,8 @@ public class RoomCreator : MonoBehaviour
         doorObjects = new DoorTriggerInteraction[4] { new(), new(), new(), new() };
 
         GenerateRoom();
+
+        CollectEntities();
     }
 
     public void GenerateRoom()
@@ -41,8 +53,25 @@ public class RoomCreator : MonoBehaviour
                 break;
 
             case RoomType.Enemy:
-                index = Random.Range(0, _layoutList.enemyRoomLayouts.Count);
-                content = Instantiate(_layoutList.enemyRoomLayouts[index], _gridTransform);
+
+                // Choose enemy room layout based on difficulty
+                if(EnemyDifficulty == EnemyDifficulty.Hard)
+                {
+                    index = Random.Range(0, _layoutList.hardEnemyRoomLayouts.Count);
+                    content = Instantiate(_layoutList.hardEnemyRoomLayouts[index], _gridTransform);
+                    
+                }
+                else if(EnemyDifficulty == EnemyDifficulty.Medium)
+                {
+                    index = Random.Range(0, _layoutList.mediumEnemyRoomLayouts.Count);
+                    content = Instantiate(_layoutList.mediumEnemyRoomLayouts[index], _gridTransform);
+                }
+                else
+                {
+                    index = Random.Range(0, _layoutList.easyEnemyRoomLayouts.Count);
+                    content = Instantiate(_layoutList.easyEnemyRoomLayouts[index], _gridTransform);
+                }
+
                 break;
 
             case RoomType.Treasure:
@@ -79,5 +108,17 @@ public class RoomCreator : MonoBehaviour
     {
         doorObjects[doorDirection].currentRoomID = currentRoomID;
         doorObjects[doorDirection].nextRoomID = nextRoomID;
+    }
+
+    private void CollectEntities()
+    {
+        if(roomType == RoomType.Enemy)
+        {
+            enemies = GetComponentsInChildren<Enemy>();
+        }
+        else if(roomType == RoomType.Boss)
+        {
+            boss = GetComponentInChildren<Boss>();
+        }
     }
 }

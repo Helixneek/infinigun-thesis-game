@@ -104,6 +104,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentRoomID: 0
   nextRoomID: 0
+  isLocked: 0
 --- !u!61 &63919004180341789
 BoxCollider2D:
   m_ObjectHideFlags: 0

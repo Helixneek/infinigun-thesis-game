@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeName: Finesse
   upgradeType: 4
-  flavorText: Less clumsiness in reloading
+  flavorText: Reload speed up
   sprite: {fileID: 21300000, guid: 5d601bd14d11f6e4f9abcff2fa741106, type: 3}
   isPercentage: 0
-  upgradeValue: 0.6
+  upgradeValue: 0.4
   upgradeTier: 1

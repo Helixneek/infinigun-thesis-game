@@ -15,10 +15,14 @@ MonoBehaviour:
   levelId: 1
   levelName: Level 1
   levelDifficulty: 1
-  safeRoomGaps: 1
+  easyRooms: 1
+  mediumRooms: 1
+  hardRooms: 0
+  easyRoomBreakoff: 6
+  mediumRoomBreakoff: 1
   maxRoomCount: 15
-  maxEnemyCount: 7
+  maxEnemyCount: 8
   maxTreasureCount: 1
   maxPuzzleCount: 1
-  maxTrapCount: 1
+  maxTrapCount: 0
   maxShopCount: 1

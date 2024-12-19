@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeName: Small Damage Boost
   upgradeType: 0
-  flavorText: Damage+
+  flavorText: Damage slightly up
   sprite: {fileID: -2047082220235981691, guid: d129022b199c1db46bc4ae572e094f9a, type: 3}
   isPercentage: 0
-  upgradeValue: 0.5
+  upgradeValue: 0.25
   upgradeTier: 0

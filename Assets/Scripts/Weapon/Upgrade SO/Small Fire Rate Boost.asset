@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeName: Small Fire Rate Boost
   upgradeType: 1
-  flavorText: Fire Rate+
+  flavorText: Fire rate slightly up
   sprite: {fileID: -2047082220235981691, guid: c73ea6cee57cc344a8f39d50ec2ba4fe, type: 3}
   isPercentage: 0
-  upgradeValue: 0.05
+  upgradeValue: 0.01
   upgradeTier: 0

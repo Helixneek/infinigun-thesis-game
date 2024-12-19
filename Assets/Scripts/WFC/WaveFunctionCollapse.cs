@@ -10,6 +10,9 @@ public class WaveFunctionCollapse : MonoBehaviour
     [SerializeField] private WFC_RoomPositions roomPositioner;
     [SerializeField] private WFC_Drawer roomDrawer;
 
+    [Space]
+    [SerializeField] private int maxWFCRetries = 10;
+
     [Header("Tiles")]
     [SerializeField] private WFC_TileTemplate[] tileTemplates;
 
@@ -18,7 +21,6 @@ public class WaveFunctionCollapse : MonoBehaviour
     [SerializeField] private Transform gridParent;
 
     [Header("Room Control")]
-    [SerializeField] private int maxRoomCount;
     [Tooltip("Whether to start the map generation from the center or from a random cell")]
     [SerializeField] private bool startFromCenter = true;
     [Tooltip("Maximum number of times to search for a direction before giving up")]
@@ -63,6 +65,9 @@ public class WaveFunctionCollapse : MonoBehaviour
     private (int, int) _latestRoomCoordinate;
 
     // Max room count setup;
+    private int _maxRoomCount;
+
+    private int _maxEmptyRoomCount = 0;
     private int _maxEnemyRoomCount = 0;
     private int _maxTreasureRoomCount = 0;
     private int _maxPuzzleRoomCount = 0;
@@ -76,6 +81,7 @@ public class WaveFunctionCollapse : MonoBehaviour
     private (int, int)[] _currentBranchRoomCoordinate = new (int, int)[4];
 
     // Room count tracking
+    private int _currentEmptyRoomCount = 0;
     private int _currentEnemyRoomCount = 0;
     private int _currentTreasureRoomCount = 0;
     private int _currentPuzzleRoomCount = 0;
@@ -86,16 +92,19 @@ public class WaveFunctionCollapse : MonoBehaviour
     private List<int> _puzzleRoomPositions;
     private List<int> _trapRoomPositions;
     private List<int> _shopRoomPositions;
-
+    
     private int[] _safeRoomPositions;
 
+    private int _wfcRetryAttempt = 0;
+
+    private GameObject _player;
     private PlayerSpawn _playerSpawn;
 
     [HideInInspector] public WFC_Cell firstCell;
 
     private void Start()
     {
-        _playerSpawn = FindFirstObjectByType<PlayerSpawn>();
+        SetupPlayer();
 
         // Pre-preparation
         SetupLevelConfig();
@@ -109,6 +118,24 @@ public class WaveFunctionCollapse : MonoBehaviour
         // Cell collapse
         PerformWaveFunctionCollapse();
     }
+
+    private void SetupPlayer()
+    {
+        // Find player
+        _player = GameObject.FindGameObjectWithTag("Player");
+
+        // If there is no player object detected
+        if (_player == null)
+        {
+            // Clone PlayerClone object from singleton
+            _player = Instantiate(PlayerDataManager.Instance.PlayerClone, Vector3.zero, Quaternion.identity);
+            _player.SetActive(true);
+        }
+
+        _playerSpawn = _player.GetComponent<PlayerSpawn>();
+
+    }
+
     private void SetupLevelConfig()
     {
         // Set level difficulty
@@ -118,6 +145,9 @@ public class WaveFunctionCollapse : MonoBehaviour
         _safeRoomPositions = roomPositioner.GetSafeRoomPositions(_levelDifficulty);
 
         // Set max rooms
+        _maxRoomCount = levelConfigFile.maxRoomCount;
+
+        _maxEmptyRoomCount = levelConfigFile.maxRoomCount - (_maxEnemyRoomCount + _maxTreasureRoomCount + _maxPuzzleRoomCount + _maxTrapRoomCount + _maxShopRoomCount + 1);
         _maxEnemyRoomCount = levelConfigFile.maxEnemyCount;
         _maxTreasureRoomCount = levelConfigFile.maxTreasureCount;
         _maxPuzzleRoomCount = levelConfigFile.maxPuzzleCount;
@@ -125,23 +155,76 @@ public class WaveFunctionCollapse : MonoBehaviour
         _maxShopRoomCount = levelConfigFile.maxShopCount;
     }
 
+    public void WFCDEbug()
+    {
+        //if(!isDebug) return;
+
+        if (_gridCopy != null && _gridCopy.Count <= 0)
+        {
+            roomDrawer.StartDrawer(dimension, _grid, firstCell, gridParent);
+            _playerSpawn.SetPlayerSpawn();
+
+            Debug.Log("[DEBUG] WFC COMPLETE");
+            return;
+        }
+
+        Debug.Log("[DEBUG] Processing grid copy");
+        ProcessGridCopy();
+        System.Threading.Thread.Sleep(1);
+
+        Debug.Log("[DEBUG] Collapsing cell");
+        CollapseCell();
+        System.Threading.Thread.Sleep(1);
+
+        Debug.Log("[DEBUG] Recalculating options");
+        RecalculateOptions();
+        System.Threading.Thread.Sleep(1);
+    }
+
     // Actually do the entire collapse process
     private void PerformWaveFunctionCollapse()
     {
-        for (int i = 0; i < dimension * dimension; i++)
+        while (_wfcRetryAttempt < maxWFCRetries)
         {
-            //Debug.Log("WFC run " + i);
-            ProcessGridCopy();
-            CollapseCell();
-            RecalculateOptions();
-
-            if (i == dimension * dimension - 1) // Last collapse
+            try
             {
-                //Debug.Log("WFC completed");
-                roomDrawer.StartDrawer(dimension, _grid, firstCell, gridParent);
-                _playerSpawn.SetPlayerSpawn();
+                for (int i = 0; i < dimension * dimension; i++)
+                {
+                    //Debug.Log("WFC run " + i);
+                    ProcessGridCopy();
+                    CollapseCell();
+                    RecalculateOptions();
+
+                    if (i == dimension * dimension - 1 && _gridCopy.Count <= 0) // Last collapse
+                    {
+                        //Debug.Log("WFC completed");
+                        roomDrawer.StartDrawer(dimension, _grid, firstCell, gridParent);
+                        _playerSpawn.SetPlayerSpawn();
+
+                        return;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("[PerformWaveFunctionCollapse] Exception caught: " + e);
+
+                _wfcRetryAttempt++;
+                Debug.LogError($"Retry {_wfcRetryAttempt}: {e.Message}");
+                //if (_wfcRetryAttempt >= maxWFCRetries) throw;
+
+                // Restart
+                DestroyYounglings();
+
+                CreateTiles();
+                GenerateAdjacencyRules();
+                InitializeGrid();
+                CreateInitialBranches();
+
+                PerformWaveFunctionCollapse();
             }
         }
+
     }
 
     // Create WFC_Tile objects
@@ -149,7 +232,7 @@ public class WaveFunctionCollapse : MonoBehaviour
     {
         for(int i = 0; i < tileTemplates.Length; i++)
         {
-            Debug.Log("tile " + i + ": " + tileTemplates[i].name);
+            //Debug.Log("tile " + i + ": " + tileTemplates[i].name);
             _tiles.Add(new WFC_Tile(tileTemplates[i].roomData, tileTemplates[i].up, tileTemplates[i].right, tileTemplates[i].down, tileTemplates[i].left));
         }
         
@@ -158,21 +241,21 @@ public class WaveFunctionCollapse : MonoBehaviour
     // Analyze each tile and generate their adjacency rules
     private void GenerateAdjacencyRules()
     {
-        Debug.Log("Generating adjacency rules");
+        //Debug.Log("Generating adjacency rules");
 
         foreach(WFC_Tile tile in _tiles)
         {
             tile.Analyze(_tiles.ToArray());
         }
 
-        Debug.Log("Adjacency rules generated");
+        //Debug.Log("Adjacency rules generated");
     }
 
     // Create initial grid of cells
     private void InitializeGrid()
     {
-        Debug.Log("Initializing grid of " + (dimension * dimension) + " cells");
-        Debug.Log("Tiles length: " + _tiles.Count);
+        //Debug.Log("Initializing grid of " + (dimension * dimension) + " cells");
+        //Debug.Log("Tiles length: " + _tiles.Count);
 
         // Initialize WFC_Cell list
         _grid = new List<WFC_Cell>();
@@ -203,7 +286,7 @@ public class WaveFunctionCollapse : MonoBehaviour
         Debug.Log("Grid copy created with " + _gridCopy.Count + " non-collapsed cells");
 
         // Stop function if gridCopy is empty
-        if (_gridCopy.Count == 0)
+        if (_gridCopy.Count <= 0)
         {
             Debug.Log("Grid copy is empty, stopping function");
             return;
@@ -229,10 +312,12 @@ public class WaveFunctionCollapse : MonoBehaviour
     {
         WFC_Cell cell = _grid[0];
 
-        while (_firstRoom)
+        if (_firstRoom)
         {
             int x = startFromCenter ? dimension / 2 : UnityEngine.Random.Range(0, dimension);
             int y = startFromCenter ? dimension / 2 : UnityEngine.Random.Range(0, dimension);
+
+            //Debug.Log($"Grid Copy Count: {_gridCopy.Count}");
 
             if (_gridCopy.Contains(_grid[x + y * dimension]))
             {
@@ -240,6 +325,8 @@ public class WaveFunctionCollapse : MonoBehaviour
                 _startRoomCoordinate = _latestRoomCoordinate = (x, y);
                 cell.options = new List<int> { 1 };
                 _latestRoomType = RoomType.Empty;
+
+                _currentEmptyRoomCount++;
                 _currentRoomCount++;
                 _firstRoom = false;
                 cell.collapsed = true;
@@ -253,12 +340,12 @@ public class WaveFunctionCollapse : MonoBehaviour
                     (x, y)  // LEFT
                 };
 
-                DebugShowGridListOptions(_grid);
-                break;
+                //DebugShowGridListOptions(_grid);
+                //break;
             }
         }
 
-        if (!_firstRoom && _currentRoomCount < maxRoomCount)
+        else if (!_firstRoom && _currentRoomCount < _maxRoomCount)
         {
             // int x = _latestRoomCoordinate.Item1;
             // int y = _latestRoomCoordinate.Item2;
@@ -270,7 +357,7 @@ public class WaveFunctionCollapse : MonoBehaviour
             int y = _currentBranchRoomCoordinate[branch].Item2;
 
             // Time for boss room
-            if(_currentRoomCount == maxRoomCount - 1) {
+            if(_currentRoomCount == _maxRoomCount - 1) {
                 x = _currentBranchRoomCoordinate[FindLargestIndex(_branchRoomCount)].Item1;
                 y = _currentBranchRoomCoordinate[FindLargestIndex(_branchRoomCount)].Item2;
             }
@@ -299,10 +386,13 @@ public class WaveFunctionCollapse : MonoBehaviour
 
             int roomIndex = DetermineRoomType();
 
-            if (_currentRoomCount == maxRoomCount - 1)
+            if (_currentRoomCount == _maxRoomCount - 1)
             {
                 cell.options = new List<int> { (int)RoomType.Boss };
                 _endRoomCoordinate = _latestRoomCoordinate;
+                _latestRoomType = RoomType.Boss;
+
+                Debug.Log($"Boss Room Placement: CurrentRoomCount={_currentRoomCount}, MaxRoomCount={_maxRoomCount}");
             }
             else
             {
@@ -315,14 +405,19 @@ public class WaveFunctionCollapse : MonoBehaviour
             _branchRoomCount[branch]++;
             cell.collapsed = true;
         }
-        else if (!_firstRoom && _currentRoomCount >= maxRoomCount)
+        else if (!_firstRoom && _currentRoomCount >= _maxRoomCount)
         {
             foreach (WFC_Cell gridcell in _gridCopy)
             {
                 gridcell.options = new List<int> { 0 };
                 gridcell.collapsed = true;
             }
+
+            //cell.options = new List<int> { 0 };
+            //cell.collapsed = true;
         }
+
+        Debug.Log("[COLLAPSE CELL] Room " + _currentRoomCount + " type: " + _latestRoomType);
     }
 
     private int DetermineRoomType()
@@ -332,10 +427,17 @@ public class WaveFunctionCollapse : MonoBehaviour
 
         Debug.Log("[DetermineRoomType] Safe rooms positions: " + _safeRoomPositions.Length);
 
-        while (!validRoom && _currentRoomCount < maxRoomCount - 1)
+        if (!validRoom && _currentRoomCount < _maxRoomCount - 1)
         {
-            roomIndex = _safeRoomPositions.Contains(_currentRoomCount) ? (int)PickSafeRoomType() : (int)RoomType.Enemy;
-            _safeRoomPositions = _safeRoomPositions.Where(val => val != _currentRoomCount).ToArray();
+            if(_safeRoomPositions.Contains(_currentRoomCount))
+            {
+                roomIndex = (int)PickSafeRoomType();
+                _safeRoomPositions = _safeRoomPositions.Where(val => val != _currentRoomCount).ToArray();
+            }
+            else
+            {
+                roomIndex = (int)RoomType.Enemy;
+            }
 
             Debug.Log("[DetermineRoomType] Roomindex: " + roomIndex);
             validRoom = ValidateRoomType(roomIndex);
@@ -348,7 +450,7 @@ public class WaveFunctionCollapse : MonoBehaviour
     {
         switch (roomIndex)
         {
-            case 1: _latestRoomType = RoomType.Empty; return true;
+            case 1: _latestRoomType = RoomType.Empty; _currentEmptyRoomCount++; return true;
             case 2: _latestRoomType = RoomType.Enemy; _currentEnemyRoomCount++; return true;
             case 3: _latestRoomType = RoomType.Treasure; _currentTreasureRoomCount++; return true;
             case 4: _latestRoomType = RoomType.Puzzle; _currentPuzzleRoomCount++; return true;
@@ -395,8 +497,8 @@ public class WaveFunctionCollapse : MonoBehaviour
             }
         }
 
-        Debug.Log("[RecalculateOptions] Next grid cell check: " + nextGrid[0]);
-        Debug.Log("[RecalculateOptions] Initial grid cell check: " + _grid[0]);
+        //Debug.Log("[RecalculateOptions] Next grid cell check: " + nextGrid[0]);
+        //Debug.Log("[RecalculateOptions] Initial grid cell check: " + _grid[0]);
 
         _grid = nextGrid;
     }
@@ -415,7 +517,7 @@ public class WaveFunctionCollapse : MonoBehaviour
     private RoomType PickSafeRoomType()
     {
         RoomType result = RoomType.Wall;
-        int[] choices = new int[] { (int)RoomType.Treasure, (int)RoomType.Puzzle, (int)RoomType.Trap, (int)RoomType.Shop};
+        int[] choices = new int[] { (int)RoomType.Empty, (int)RoomType.Treasure, (int)RoomType.Puzzle, (int)RoomType.Trap, (int)RoomType.Shop};
 
         // Keep repeating until a valid room type is obtained
         while(result == RoomType.Wall)
@@ -424,6 +526,15 @@ public class WaveFunctionCollapse : MonoBehaviour
 
             switch (choices[index])
             {
+                case (int)RoomType.Empty:
+                    if (_currentEmptyRoomCount >= _maxEmptyRoomCount)
+                    {
+                        continue;
+                    }
+
+                    result = RoomType.Empty;
+                    break;
+
                 case (int)RoomType.Treasure:
                     if(_currentTreasureRoomCount >= _maxTreasureRoomCount)
                     {
@@ -482,7 +593,7 @@ public class WaveFunctionCollapse : MonoBehaviour
         {
                (2, 15),
                (3, 50),
-               (4, 35)
+               (4, 35) // hapus
         };
         var rng = new WeightedRNG(weights);
         int result = rng.GetRandomIntItem();
@@ -549,12 +660,14 @@ public class WaveFunctionCollapse : MonoBehaviour
         int result = -1;
         int i = 0;
 
+        Debug.Log($"Search attempts: {i}, Current Room Count: {_currentRoomCount}");
+
         // Check if the new direction already has another room or not
         while (result < 0)
         {
             if (i > maxDirectionRetries)
             {
-                Debug.Log("[SearchForNewDirections] Max tries reached");
+                Debug.LogWarning("[SearchForNewDirections] Max tries reached");
                 break;
             }
 
@@ -722,7 +835,7 @@ public class WaveFunctionCollapse : MonoBehaviour
                     break;
 
                 default:
-                    Debug.Log("SearchForNewDirections: wtf");
+                    Debug.LogError("SearchForNewDirections: wtf");
                     break;
             }
 

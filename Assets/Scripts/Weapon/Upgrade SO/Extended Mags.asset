@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeName: Extended Mags
   upgradeType: 3
-  flavorText: More bullets!
+  flavorText: Ammo capacity up
   sprite: {fileID: 21300000, guid: 86287b08f8feb054d89ac951c12f2609, type: 3}
   isPercentage: 0
-  upgradeValue: 5
+  upgradeValue: 2
   upgradeTier: 1

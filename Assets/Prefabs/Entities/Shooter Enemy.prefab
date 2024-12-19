@@ -105,7 +105,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1027142401
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 1
   m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
@@ -198,7 +198,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1027142401
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.00816263, g: 0.90943396, b: 0, a: 1}
@@ -224,6 +224,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 6
+  coinPrefab: {fileID: -2602986536865478353, guid: 156ec109636543c488d007452be15549, type: 3}
+  coinSpread: 1
+  maxCoinsDropped: 1
+  coinLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  gemPrefab: {fileID: -3422571106888656962, guid: a2f54307501b1ec458697d84001f23b4, type: 3}
+  maxGemsDropped: 1
+  heartPrefab: {fileID: 2224449913627813131, guid: 5dd290c97032fca4b8beacd4295e777c, type: 3}
+  maxHeartsDropped: 1
 --- !u!114 &9145163797789130977
 MonoBehaviour:
   m_ObjectHideFlags: 0

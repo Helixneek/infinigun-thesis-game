@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeName: Small Reload Upgrade
   upgradeType: 4
-  flavorText: Reload Speed+
+  flavorText: Reload speed slightly up
   sprite: {fileID: -2047082220235981691, guid: 7bff427f6f64b1c418b1735256861c4c, type: 3}
   isPercentage: 0
-  upgradeValue: 0.25
+  upgradeValue: 0.2
   upgradeTier: 0

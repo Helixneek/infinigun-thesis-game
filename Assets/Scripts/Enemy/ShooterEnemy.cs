@@ -13,7 +13,6 @@ public class ShooterEnemy : MonoBehaviour
     [SerializeField] private float bulletSpeed;
 
     private Transform _playerTransform;
-    private int damp = 5;
 
     private float _shotTimer = 0f;
     private float _currentVariance = 0f;
@@ -21,13 +20,16 @@ public class ShooterEnemy : MonoBehaviour
 
     private void Start()
     {
-        _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-
         SetFireRateVariance();
     }
 
     private void Update()
     {
+        if(_playerTransform == null)
+        {
+            _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        }
+
         _shotTimer += Time.deltaTime;
 
         if(_shotTimer >= fireRate + _currentVariance && !_isShooting)

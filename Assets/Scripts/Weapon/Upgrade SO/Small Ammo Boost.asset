@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeName: Small Ammo Boost
   upgradeType: 3
-  flavorText: Ammo Capacity+
+  flavorText: Ammo capacity slightly up
   sprite: {fileID: -2047082220235981691, guid: db25b8988ba93364ba26463ffb14f600, type: 3}
   isPercentage: 0
   upgradeValue: 1

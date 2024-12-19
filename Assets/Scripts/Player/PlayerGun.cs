@@ -39,7 +39,7 @@ public class PlayerGun : MonoBehaviour
 
     private float _angle;
     private float _shotTimer;
-    private float _reloadBaseDuration = 2f;
+    //private float _reloadBaseDuration = 2f;
     private float _fillTime = 0;
 
     private bool _isReloading = false;
@@ -117,7 +117,7 @@ public class PlayerGun : MonoBehaviour
         gun.transform.localScale = localScale;
     }
 
-    private void UpdateGunStats()
+    public void UpdateGunStats()
     {
         damage += playerUpgradeInventory.damageChange;
         fireRate += playerUpgradeInventory.fireRateChange;
@@ -126,16 +126,17 @@ public class PlayerGun : MonoBehaviour
         reloadSpeed += playerUpgradeInventory.reloadSpeedChange;
     }
 
-    private void UpdateAmmoText()
+    public void UpdateAmmoText()
     {
         currentAmmoText.text = "Ammo: " + _currentAmmo + " / " + maxAmmoPerMagazine;
-        Debug.Log("current ammo: " + _currentAmmo);
+        //Debug.Log("current ammo: " + _currentAmmo);
     }
 
     private IEnumerator ReloadGun()
     {
         _isReloading = true;
-
+        StartCoroutine(
+                FillReloadSlider());
         yield return new WaitForSeconds(reloadSpeed);
 
         _currentAmmo = maxAmmoPerMagazine;
@@ -145,16 +146,16 @@ public class PlayerGun : MonoBehaviour
         _isReloading = false;
     }
 
-    private void FillReloadSlider()
+    private IEnumerator FillReloadSlider()
     {
         // Handle reload bar
         reloadSlider.gameObject.SetActive(true);
 
         reloadSlider.value = Mathf.Lerp(0f, 1f, _fillTime);
 
-        _fillTime += Time.deltaTime / _reloadBaseDuration;
+        _fillTime += Time.deltaTime / reloadSpeed;
 
-        //yield return new WaitForSeconds(_reloadBaseDuration);
+        yield return new WaitForSeconds(_fillTime);
 
         // Turn off reload bar
         reloadSlider.gameObject.SetActive(false);

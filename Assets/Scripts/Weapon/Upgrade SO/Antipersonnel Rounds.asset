@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeName: Antipersonnel Rounds
   upgradeType: 0
-  flavorText: Better bullets for the squishy kind
+  flavorText: Damage up
   sprite: {fileID: 21300000, guid: 9153858c97113764dbc71b9903b02214, type: 3}
   isPercentage: 0
-  upgradeValue: 1.5
+  upgradeValue: 0.5
   upgradeTier: 1

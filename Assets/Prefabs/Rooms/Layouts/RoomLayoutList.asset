@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   emptyRoomLayouts:
   - {fileID: 707821585043276988, guid: 5324a296d21c8814fb08fa096132e892, type: 3}
-  - {fileID: 4479268077992469845, guid: 512dc38b237980b4c904d4b3469c8690, type: 3}
-  - {fileID: 7405372131929231124, guid: 1f10e6cf18d195248ad7b221d55b3132, type: 3}
-  enemyRoomLayouts:
-  - {fileID: 7878503163044133791, guid: 90d4555b4567b474ea85aaecb45bee84, type: 3}
+  easyEnemyRoomLayouts:
+  - {fileID: 807262058460857537, guid: 810492e5c83a748488a5881da7e4ab48, type: 3}
+  - {fileID: 5732553692763181364, guid: 30ba3f89c53cc5e44a5fa616dff9931d, type: 3}
+  mediumEnemyRoomLayouts:
   - {fileID: 8859346890994853234, guid: aa1826367ec53394293113b3e6e44378, type: 3}
-  - {fileID: 732414187740456112, guid: 2e552e0e40e9e654ea74d0f3251e9772, type: 3}
+  hardEnemyRoomLayouts:
+  - {fileID: 7354396118311316642, guid: f93f1f3b2db1ee248823e47d38bd75ff, type: 3}
   treasureRoomLayouts:
   - {fileID: 7809821315698143843, guid: 7830495fb6d55e4468140116a47d6970, type: 3}
   puzzleRoomLayouts:

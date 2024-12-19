@@ -6,6 +6,7 @@ public class ItemPedestal : MonoBehaviour
     [SerializeField] private SpriteRenderer itemSprite;
 
     private GunUpgrade _upgrade;
+    private bool isClaimed = false;
 
     private void Start()
     {
@@ -23,8 +24,17 @@ public class ItemPedestal : MonoBehaviour
 
     public GunUpgrade GiveUpgrade()
     {
-        itemSprite.sprite = null;
+        if (!isClaimed)
+        {
+            itemSprite.sprite = null;
+            isClaimed = true;
 
-        return _upgrade;
+            return _upgrade;
+        }
+        else
+        {
+            return null;
+        }
+       
     }
 }

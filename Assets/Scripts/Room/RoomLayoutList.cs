@@ -8,7 +8,9 @@ public class RoomLayoutList : ScriptableObject
     public List<GameObject> emptyRoomLayouts = new List<GameObject>();
 
     [Space]
-    public List<GameObject> enemyRoomLayouts = new List<GameObject>();
+    public List<GameObject> easyEnemyRoomLayouts = new List<GameObject>();
+    public List<GameObject> mediumEnemyRoomLayouts = new List<GameObject>();
+    public List<GameObject> hardEnemyRoomLayouts = new List<GameObject>();
 
     [Space]
     public List<GameObject> treasureRoomLayouts = new List<GameObject>();

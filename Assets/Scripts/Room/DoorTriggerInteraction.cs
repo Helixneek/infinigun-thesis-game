@@ -7,6 +7,8 @@ public class DoorTriggerInteraction : TriggerInteractionBase
     public int currentRoomID;
     public int nextRoomID;
 
+    public bool isLocked = false;
+
     private List<DoorTriggerInteraction> otherDoors;
 
     private void Start()
@@ -16,6 +18,8 @@ public class DoorTriggerInteraction : TriggerInteractionBase
 
     public override void Interact()
     {
+        if(isLocked) return;
+
         // Teleport to the door with:
         // 1. Same currentRoomID as this door's nextRoomID;
         // 2. Same nextRoomID as this door's currentRoomID;

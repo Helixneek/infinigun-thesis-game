@@ -5,7 +5,7 @@ using UnityEngine;
 public class WFC_Drawer : MonoBehaviour
 {
     [Header("Objects")]
-    [SerializeField] private LevelConfigSO levelConfig;
+    public LevelConfigSO levelConfig;
     [SerializeField] private RoomCreator roomPrefab;
     [SerializeField] private DoorTriggerInteraction doorPrefab;
     [SerializeField] private Vector2[] doorSpawnPositions;
@@ -14,12 +14,14 @@ public class WFC_Drawer : MonoBehaviour
     [SerializeField] private int tileWidth;
     [SerializeField] private int tileHeight;
 
+    private GemDistributor gemDistributor;
+
     private int _dimension;
     private List<WFC_Cell> _grid;
     private WFC_Cell _firstCell;
     private Transform _gridParent;
 
-    private List<RoomCreator> _roomObjects;
+    public List<RoomCreator> roomObjects;
 
     private int _totalRoomIndex = 0;
 
@@ -29,6 +31,14 @@ public class WFC_Drawer : MonoBehaviour
 
     private int _easyRoomCount = 0;
     private int _mediumRoomCount = 0;
+
+    private void Awake()
+    {
+        WaveFunctionCollapse wfc = GetComponent<WaveFunctionCollapse>();
+        levelConfig = wfc.levelConfigFile;
+
+        gemDistributor = GetComponent<GemDistributor>();
+    }
 
     private void Start()
     {
@@ -63,12 +73,14 @@ public class WFC_Drawer : MonoBehaviour
 
         // Put the doors in
         CreateDoors();
-        
+
+        // Add the gem
+        gemDistributor.AssignGemToEnemy();
     }
 
     private void DrawCellTiles()
     {
-        _roomObjects = new List<RoomCreator>(_dimension * _dimension);
+        roomObjects = new List<RoomCreator>(_dimension * _dimension);
 
         for (int j = 0; j < _dimension; j++)
         {
@@ -86,7 +98,7 @@ public class WFC_Drawer : MonoBehaviour
                     if (cell.options[0] == (int)RoomType.Wall)
                     {
                         RoomCreator empty = null;
-                        _roomObjects.Add(empty);
+                        roomObjects.Add(empty);
 
                         continue;
                     }
@@ -123,7 +135,7 @@ public class WFC_Drawer : MonoBehaviour
                     }
 
                     // Add room object to the list
-                    _roomObjects.Add(obj);
+                    roomObjects.Add(obj);
 
                     // Prepare room data and generate the contents
                     obj.SetupRoom(GetRoomTypeFromInt(cell.options[0]));
@@ -143,7 +155,7 @@ public class WFC_Drawer : MonoBehaviour
                     }
                     else
                     {
-                        obj.gameObject.name = $" {obj.roomType} Room {i} {j}";
+                        obj.gameObject.name = $"{obj.roomType} Room {i} {j}";
                     }
 
                     obj.gameObject.transform.parent = _gridParent;
@@ -220,61 +232,69 @@ public class WFC_Drawer : MonoBehaviour
                     if ((j + 1) < _dimension 
                         && _grid[i + (j + 1) * _dimension] != null 
                         && _grid[i + (j + 1) * _dimension].collapsed
-                        && _grid[i + (j + 1) * _dimension].options[0] != (int)RoomType.Wall)
+                        && _grid[i + (j + 1) * _dimension].options[0] != (int)RoomType.Wall
+                        && _grid[i + (j + 1) * _dimension].options[0] != (int)RoomType.Boss)
                     {
                         DoorTriggerInteraction door = Instantiate(doorPrefab, new Vector2(doorSpawnPositions[0].x + (i * tileWidth), doorSpawnPositions[0].y + (j * tileHeight)), Quaternion.identity);
                         door.gameObject.name = $"Up Door {i} {j}";
 
-                        door.transform.SetParent(_roomObjects[i + j * _dimension].transform);
+                        door.transform.SetParent(roomObjects[i + j * _dimension].transform);
 
                         //Debug.Log("[CreateDoors] DoorObjects length: " + _roomObjects[i + j * _dimension].doorObjects.Length);
-                        _roomObjects[i + j * _dimension].doorObjects[0] = door;
+                        roomObjects[i + j * _dimension].doorObjects[0] = door;
                     }
 
                     // RIGHT
                     if ((i + 1) < _dimension 
                         && _grid[(i + 1) + j * _dimension] != null 
                         && _grid[(i + 1) + j * _dimension].collapsed
-                        && _grid[(i + 1) + j * _dimension].options[0] != (int)RoomType.Wall)
+                        && _grid[(i + 1) + j * _dimension].options[0] != (int)RoomType.Wall
+                        && _grid[(i + 1) + j * _dimension].options[0] != (int)RoomType.Boss)
                     {
                         DoorTriggerInteraction door = Instantiate(doorPrefab, new Vector2(doorSpawnPositions[1].x + (i * tileWidth), doorSpawnPositions[1].y + (j * tileHeight)), Quaternion.Euler(0, 0, 270));
                         door.gameObject.name = $"Right Door {i} {j}";
 
-                        door.transform.SetParent(_roomObjects[i + j * _dimension].transform);
+                        door.transform.SetParent(roomObjects[i + j * _dimension].transform);
 
-                        _roomObjects[i + j * _dimension].doorObjects[1] = door;
+                        roomObjects[i + j * _dimension].doorObjects[1] = door;
                     }
 
                     // DOWN
                     if ((j - 1) >= 0
                         && _grid[i + (j - 1) * _dimension] != null 
                         && _grid[i + (j - 1) * _dimension].collapsed
-                        && _grid[i + (j - 1) * _dimension].options[0] != (int)RoomType.Wall)
+                        && _grid[i + (j - 1) * _dimension].options[0] != (int)RoomType.Wall
+                        && _grid[i + (j - 1) * _dimension].options[0] != (int)RoomType.Boss)
                     {
                         DoorTriggerInteraction door = Instantiate(doorPrefab, new Vector2(doorSpawnPositions[2].x + (i * tileWidth), doorSpawnPositions[2].y + (j * tileHeight)), Quaternion.Euler(0, 0, 180));
                         door.gameObject.name = $"Down Door {i} {j}";
 
-                        door.transform.SetParent(_roomObjects[i + j * _dimension].transform);
+                        door.transform.SetParent(roomObjects[i + j * _dimension].transform);
 
-                        _roomObjects[i + j * _dimension].doorObjects[2] = door;
+                        roomObjects[i + j * _dimension].doorObjects[2] = door;
                     }
 
                     // LEFT
                     if ((i - 1) >= 0 
                         && _grid[(i - 1) + j * _dimension] != null 
                         && _grid[(i - 1) + j * _dimension].collapsed 
-                        && _grid[(i - 1) + j * _dimension].options[0] != (int)RoomType.Wall)
+                        && _grid[(i - 1) + j * _dimension].options[0] != (int)RoomType.Wall
+                        && _grid[(i - 1) + j * _dimension].options[0] != (int)RoomType.Boss)
                     {
                         DoorTriggerInteraction door = Instantiate(doorPrefab, new Vector2(doorSpawnPositions[3].x + (i * tileWidth), doorSpawnPositions[3].y + (j * tileHeight)), Quaternion.Euler(0, 0, 90));
                         door.gameObject.name = $"Left Door {i} {j}";
 
-                        door.transform.SetParent(_roomObjects[i + j * _dimension].transform);
+                        door.transform.SetParent(roomObjects[i + j * _dimension].transform);
 
-                        _roomObjects[i + j * _dimension].doorObjects[3] = door;
+                        roomObjects[i + j * _dimension].doorObjects[3] = door;
                     }
 
                     // Give the door values
-                    AssignDoorValues(i, j);
+                    if(i >= 0 && i < _dimension && j >= 0 && j < _dimension)
+                    {
+                        AssignDoorValues(i, j);
+                    }
+                    
                 }
                 
             }
@@ -289,12 +309,12 @@ public class WFC_Drawer : MonoBehaviour
             && _grid[x + (y + 1) * _dimension] != null
             && _grid[x + (y + 1) * _dimension].collapsed
             && _grid[x + (y + 1) * _dimension].options[0] != (int)RoomType.Wall
-            && _roomObjects[x + (y + 1) * _dimension].roomID >= 0)
+            && roomObjects[x + (y + 1) * _dimension].roomID >= 0)
         {
             // Add the current room ID and next room ID to the doors
-            _roomObjects[x + y * _dimension].SetDoorIDs(
-                _roomObjects[x + y * _dimension].roomID, 
-                _roomObjects[x + (y + 1) * _dimension].roomID, 
+            roomObjects[x + y * _dimension].SetDoorIDs(
+                roomObjects[x + y * _dimension].roomID, 
+                roomObjects[x + (y + 1) * _dimension].roomID, 
                 0);
         }
 
@@ -303,40 +323,42 @@ public class WFC_Drawer : MonoBehaviour
             && _grid[(x + 1) + y * _dimension] != null
             && _grid[(x + 1) + y * _dimension].collapsed
             && _grid[(x + 1) + y * _dimension].options[0] != (int)RoomType.Wall
-            && _roomObjects[(x + 1) + y * _dimension].roomID >= 0)
+            && roomObjects[(x + 1) + y * _dimension].roomID >= 0)
         {
             // Add the current room ID and next room ID to the doors
-            _roomObjects[x + y * _dimension].SetDoorIDs(
-                _roomObjects[x + y * _dimension].roomID,
-                _roomObjects[(x + 1) + y * _dimension].roomID,
+            roomObjects[x + y * _dimension].SetDoorIDs(
+                roomObjects[x + y * _dimension].roomID,
+                roomObjects[(x + 1) + y * _dimension].roomID,
                 1);
         }
 
         // DOWN
-        if ((y - 1) < _dimension
+        if ((y - 1) >= 0
+            && (y - 1) < _dimension
             && _grid[x + (y - 1) * _dimension] != null
             && _grid[x + (y - 1) * _dimension].collapsed
             && _grid[x + (y - 1) * _dimension].options[0] != (int)RoomType.Wall
-            && _roomObjects[x + (y - 1) * _dimension].roomID >= 0)
+            && roomObjects[x + (y - 1) * _dimension].roomID >= 0)
         {
             // Add the current room ID and next room ID to the doors
-            _roomObjects[x + y * _dimension].SetDoorIDs(
-                _roomObjects[x + y * _dimension].roomID,
-                _roomObjects[x + (y - 1) * _dimension].roomID,
+            roomObjects[x + y * _dimension].SetDoorIDs(
+                roomObjects[x + y * _dimension].roomID,
+                roomObjects[x + (y - 1) * _dimension].roomID,
                 2);
         }
 
         // LEFT
-        if ((x - 1) < _dimension
+        if ((x - 1) >= 0
+            && (x - 1) < _dimension
             && _grid[(x - 1) + y * _dimension] != null
             && _grid[(x - 1) + y * _dimension].collapsed
             && _grid[(x - 1) + y * _dimension].options[0] != (int)RoomType.Wall
-            && _roomObjects[(x - 1) + y * _dimension].roomID >= 0)
+            && roomObjects[(x - 1) + y * _dimension].roomID >= 0)
         {
             // Add the current room ID and next room ID to the doors
-            _roomObjects[x + y * _dimension].SetDoorIDs(
-                _roomObjects[x + y * _dimension].roomID,
-                _roomObjects[(x - 1) + y * _dimension].roomID,
+            roomObjects[x + y * _dimension].SetDoorIDs(
+                roomObjects[x + y * _dimension].roomID,
+                roomObjects[(x - 1) + y * _dimension].roomID,
                 3);
         }
     }

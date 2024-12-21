@@ -8,6 +8,11 @@ public class Enemy : MonoBehaviour, IDamageable
     [SerializeField] private float maxHealth = 5f;
 
     [Header("Drops")]
+    public bool canDropCoins = true;
+    public bool canDropGems = false;
+    public bool canDropHearts = false;
+
+    [Space]
     [SerializeField] private Coin coinPrefab;
     [SerializeField] private float coinSpread = 2f;
     [Range(0, 5)]
@@ -42,12 +47,66 @@ public class Enemy : MonoBehaviour, IDamageable
 
     private void HandleDeath()
     {
-        for(int i = 0; i < maxCoinsDropped; i++)
+        // Drop gems
+        // Is given priority
+        if (canDropGems)
         {
-            float angle = Random.Range(0f, 2 * Mathf.PI);
-            float distance = Random.Range(0f, coinSpread);
-            Vector2 spawnPosition = (Vector2)transform.position + new Vector2(Mathf.Cos(angle) * distance, Mathf.Sin(angle) * distance);
-            Instantiate(coinPrefab, spawnPosition, Quaternion.identity);
+            for (int i = 0; i < maxGemsDropped; i++)
+            {
+                float angle = Random.Range(0f, 2 * Mathf.PI);
+                float distance = Random.Range(0f, coinSpread);
+                Vector2 spawnPosition = (Vector2)transform.position + new Vector2(Mathf.Cos(angle) * distance, Mathf.Sin(angle) * distance);
+                Instantiate(gemPrefab, spawnPosition, Quaternion.identity);
+            }
+        }
+
+        // Choose if the enemy drops either coins or hearts
+        else
+        {
+            // Get the random number
+            var weights = new (int, int)[]
+            {
+                   (1, 3), // Coins
+                   (2, 1) // Hearts
+            };
+            var rng = new WeightedRNG(weights);
+            int result = rng.GetRandomIntItem();
+
+            switch(result)
+            {
+                case 1:
+                    canDropCoins = true;
+                    canDropHearts = false;
+                    break;
+
+                case 2:
+                    canDropCoins = false;
+                    canDropHearts = true;
+                    break;
+            }
+            
+            if(canDropCoins)
+            {
+                for (int i = 0; i < maxCoinsDropped; i++)
+                {
+                    float angle = Random.Range(0f, 2 * Mathf.PI);
+                    float distance = Random.Range(0f, coinSpread);
+                    Vector2 spawnPosition = (Vector2)transform.position + new Vector2(Mathf.Cos(angle) * distance, Mathf.Sin(angle) * distance);
+                    Instantiate(coinPrefab, spawnPosition, Quaternion.identity);
+                }
+            }
+            
+            if(canDropHearts)
+            {
+                for (int i = 0; i < maxHeartsDropped; i++)
+                {
+                    float angle = Random.Range(0f, 2 * Mathf.PI);
+                    float distance = Random.Range(0f, coinSpread);
+                    Vector2 spawnPosition = (Vector2)transform.position + new Vector2(Mathf.Cos(angle) * distance, Mathf.Sin(angle) * distance);
+                    Instantiate(heartPrefab, spawnPosition, Quaternion.identity);
+                }
+            }
+            
         }
 
         Destroy(gameObject);

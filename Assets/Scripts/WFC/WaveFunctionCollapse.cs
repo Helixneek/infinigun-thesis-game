@@ -6,7 +6,7 @@ using UnityEngine;
 public class WaveFunctionCollapse : MonoBehaviour
 {
     [Header("Config")]
-    [SerializeField] private LevelConfigSO levelConfigFile;
+    public LevelConfigSO levelConfigFile;
     [SerializeField] private WFC_RoomPositions roomPositioner;
     [SerializeField] private WFC_Drawer roomDrawer;
 
@@ -66,6 +66,7 @@ public class WaveFunctionCollapse : MonoBehaviour
 
     // Max room count setup;
     private int _maxRoomCount;
+    private int _maxSafeRoomCount;
 
     private int _maxEmptyRoomCount = 0;
     private int _maxEnemyRoomCount = 0;
@@ -80,7 +81,17 @@ public class WaveFunctionCollapse : MonoBehaviour
     private int[] _branchRoomCount = new int[4] { 0, 0, 0, 0};
     private (int, int)[] _currentBranchRoomCoordinate = new (int, int)[4];
 
+    private int _trueBranchDirection = 0;
+    private int _deadBranchDirection = 0;
+    private int _maxTrueBranchRoomCount = 0;
+    private int _maxDeadBranchRoomCount = 0;
+
+    private RoomType _lastTrueBranchRoom;
+    private RoomType _lastDeadBranchRoom;
+
     // Room count tracking
+    private int _currentSafeRoomCount;
+
     private int _currentEmptyRoomCount = 0;
     private int _currentEnemyRoomCount = 0;
     private int _currentTreasureRoomCount = 0;
@@ -95,12 +106,18 @@ public class WaveFunctionCollapse : MonoBehaviour
     
     private int[] _safeRoomPositions;
 
+    private int _safeRoomGaps;
+    private int _trueRoomsSinceSafe = 0;
+    private int _deadRoomsSinceSafe = 0;
+
     private int _wfcRetryAttempt = 0;
 
     private GameObject _player;
     private PlayerSpawn _playerSpawn;
 
     [HideInInspector] public WFC_Cell firstCell;
+
+    private bool somethingFuckedUp = false;
 
     private void Start()
     {
@@ -142,10 +159,16 @@ public class WaveFunctionCollapse : MonoBehaviour
         _levelDifficulty = levelConfigFile.levelDifficulty;
 
         // Set the positions of safe rooms
-        _safeRoomPositions = roomPositioner.GetSafeRoomPositions(_levelDifficulty);
+        //_safeRoomPositions = roomPositioner.GetSafeRoomPositions(_levelDifficulty);
+        _safeRoomGaps = levelConfigFile.safeRoomGaps;
+
+        // Set branch max rooms
+        _maxTrueBranchRoomCount = levelConfigFile.trueBranchLength;
+        _maxDeadBranchRoomCount = levelConfigFile.deadBranchLength;
 
         // Set max rooms
         _maxRoomCount = levelConfigFile.maxRoomCount;
+        _maxSafeRoomCount = levelConfigFile.maxRoomCount - (levelConfigFile.maxEnemyCount);
 
         _maxEmptyRoomCount = levelConfigFile.maxRoomCount - (_maxEnemyRoomCount + _maxTreasureRoomCount + _maxPuzzleRoomCount + _maxTrapRoomCount + _maxShopRoomCount + 1);
         _maxEnemyRoomCount = levelConfigFile.maxEnemyCount;
@@ -179,6 +202,8 @@ public class WaveFunctionCollapse : MonoBehaviour
         Debug.Log("[DEBUG] Recalculating options");
         RecalculateOptions();
         System.Threading.Thread.Sleep(1);
+
+        CheckIfSomethingFuckedUp();
     }
 
     // Actually do the entire collapse process
@@ -194,6 +219,8 @@ public class WaveFunctionCollapse : MonoBehaviour
                     ProcessGridCopy();
                     CollapseCell();
                     RecalculateOptions();
+
+                    CheckIfSomethingFuckedUp();
 
                     if (i == dimension * dimension - 1 && _gridCopy.Count <= 0) // Last collapse
                     {
@@ -230,6 +257,8 @@ public class WaveFunctionCollapse : MonoBehaviour
     // Create WFC_Tile objects
     private void CreateTiles()
     {
+        _tiles = new List<WFC_Tile>();
+
         for(int i = 0; i < tileTemplates.Length; i++)
         {
             //Debug.Log("tile " + i + ": " + tileTemplates[i].name);
@@ -312,6 +341,7 @@ public class WaveFunctionCollapse : MonoBehaviour
     {
         WFC_Cell cell = _grid[0];
 
+        // FIRST ROOM
         if (_firstRoom)
         {
             int x = startFromCenter ? dimension / 2 : UnityEngine.Random.Range(0, dimension);
@@ -328,7 +358,9 @@ public class WaveFunctionCollapse : MonoBehaviour
 
                 _currentEmptyRoomCount++;
                 _currentRoomCount++;
+                _currentSafeRoomCount++;
                 _firstRoom = false;
+
                 cell.collapsed = true;
                 cell.first = true;
 
@@ -339,72 +371,119 @@ public class WaveFunctionCollapse : MonoBehaviour
                     (x, y), // DOWN
                     (x, y)  // LEFT
                 };
-
-                //DebugShowGridListOptions(_grid);
-                //break;
             }
         }
 
+        // NON-FIRST ROOMS
         else if (!_firstRoom && _currentRoomCount < _maxRoomCount)
         {
-            // int x = _latestRoomCoordinate.Item1;
-            // int y = _latestRoomCoordinate.Item2;
+            int trueCount = _branchRoomCount[_trueBranchDirection];
+            int deadCount = _branchRoomCount[_deadBranchDirection];
 
-            // Choose branch direction
-            int branch = ChooseBranch();
-
-            int x = _currentBranchRoomCoordinate[branch].Item1;
-            int y = _currentBranchRoomCoordinate[branch].Item2;
-
-            // Time for boss room
-            if(_currentRoomCount == _maxRoomCount - 1) {
-                x = _currentBranchRoomCoordinate[FindLargestIndex(_branchRoomCount)].Item1;
-                y = _currentBranchRoomCoordinate[FindLargestIndex(_branchRoomCount)].Item2;
-            }
-
-            int newDirection = 0;
-
-            // If its the first room in a branch, it'll always be in the same direction as the branch
-            if(_branchRoomCount[branch] <= 0) {
-                newDirection = branch;
-            }
-            // Else, do it normally
-            else 
+            // TRUE BRANCH
+            if (trueCount < _maxTrueBranchRoomCount)
             {
-                // Search for new direction for the cell
+                int x = _currentBranchRoomCoordinate[_trueBranchDirection].Item1;
+                int y = _currentBranchRoomCoordinate[_trueBranchDirection].Item2;
+
+                int newDirection = 0;
+
+                // Get the new direction
                 newDirection = SearchForNewDirection(x, y);
+
+                // Set the values according to the results
+                switch (newDirection)
+                {
+                    case 0: cell = _grid[x + (y - 1) * dimension]; _latestRoomCoordinate = (x, y - 1); break;
+                    case 1: cell = _grid[(x + 1) + y * dimension]; _latestRoomCoordinate = (x + 1, y); break;
+                    case 2: cell = _grid[x + (y + 1) * dimension]; _latestRoomCoordinate = (x, y + 1); break;
+                    case 3: cell = _grid[(x - 1) + y * dimension]; _latestRoomCoordinate = (x - 1, y); break;
+                    default: Debug.Log("[CollapseCell] How?"); somethingFuckedUp = true; break;
+                }
+
+                // Put boss room as the final room
+                if (trueCount == _maxTrueBranchRoomCount - 1)
+                {
+                    cell.options = new List<int> { (int)RoomType.Boss };
+                    _endRoomCoordinate = _latestRoomCoordinate;
+                    _lastTrueBranchRoom = RoomType.Boss;
+                }
+                // Collapse cell normally
+                else
+                {
+                    // If its the first room in a branch, it'll always be in the same direction as the branch
+                    if (_branchRoomCount[_trueBranchDirection] <= 0)
+                    {
+                        newDirection = _trueBranchDirection;
+                    }
+
+                    // Set as regular room
+                    int roomIndex = DetermineRoomType();
+                    cell.options = new List<int> { roomIndex };
+
+                    _lastTrueBranchRoom = (RoomType)roomIndex;
+                }
+
+                _currentBranchRoomCoordinate[_trueBranchDirection] = _latestRoomCoordinate;
+
+                _currentRoomCount++;
+                _branchRoomCount[_trueBranchDirection]++;
+                cell.collapsed = true;
+
             }
 
-            switch (newDirection)
+            // DEAD BRANCH
+            else if (deadCount < _maxDeadBranchRoomCount)
             {
-                case 0: cell = _grid[x + (y - 1) * dimension]; _latestRoomCoordinate = (x, y - 1); break;
-                case 1: cell = _grid[(x + 1) + y * dimension]; _latestRoomCoordinate = (x + 1, y); break;
-                case 2: cell = _grid[x + (y + 1) * dimension]; _latestRoomCoordinate = (x, y + 1); break;
-                case 3: cell = _grid[(x - 1) + y * dimension]; _latestRoomCoordinate = (x - 1, y); break;
-                default: Debug.Log("[CollapseCell] How?"); break;
+                int x = _currentBranchRoomCoordinate[_deadBranchDirection].Item1;
+                int y = _currentBranchRoomCoordinate[_deadBranchDirection].Item2;
+
+                int newDirection = 0;
+
+                // Get the new direction
+                newDirection = SearchForNewDirection(x, y);
+
+                // Set the values according to the results
+                switch (newDirection)
+                {
+                    case 0: cell = _grid[x + (y - 1) * dimension]; _latestRoomCoordinate = (x, y - 1); break;
+                    case 1: cell = _grid[(x + 1) + y * dimension]; _latestRoomCoordinate = (x + 1, y); break;
+                    case 2: cell = _grid[x + (y + 1) * dimension]; _latestRoomCoordinate = (x, y + 1); break;
+                    case 3: cell = _grid[(x - 1) + y * dimension]; _latestRoomCoordinate = (x - 1, y); break;
+                    default: Debug.Log("[CollapseCell] How?"); break;
+                }
+
+                // Put treasure room as the final room
+                if (deadCount == _maxDeadBranchRoomCount - 1)
+                {
+                    cell.options = new List<int> { (int)RoomType.Treasure };
+                    _lastDeadBranchRoom = RoomType.Treasure;
+
+                }
+                // Collapse cell normally
+                else
+                {
+                    // If its the first room in a branch, it'll always be in the same direction as the branch
+                    if (_branchRoomCount[_deadBranchDirection] <= 0)
+                    {
+                        newDirection = _deadBranchDirection;
+                    }
+
+                    // Set as regular room
+                    int roomIndex = DetermineRoomType();
+                    cell.options = new List<int> { roomIndex };
+
+                    _lastDeadBranchRoom = (RoomType)roomIndex;
+                }
+
+                _currentBranchRoomCoordinate[_deadBranchDirection] = _latestRoomCoordinate;
+
+                _currentRoomCount++;
+                _branchRoomCount[_deadBranchDirection]++;
+                cell.collapsed = true;
             }
-
-            int roomIndex = DetermineRoomType();
-
-            if (_currentRoomCount == _maxRoomCount - 1)
-            {
-                cell.options = new List<int> { (int)RoomType.Boss };
-                _endRoomCoordinate = _latestRoomCoordinate;
-                _latestRoomType = RoomType.Boss;
-
-                Debug.Log($"Boss Room Placement: CurrentRoomCount={_currentRoomCount}, MaxRoomCount={_maxRoomCount}");
-            }
-            else
-            {
-                cell.options = new List<int> { roomIndex };
-            }
-
-            _currentBranchRoomCoordinate[branch] = _latestRoomCoordinate;
-
-            _currentRoomCount++;
-            _branchRoomCount[branch]++;
-            cell.collapsed = true;
         }
+        // WALLS
         else if (!_firstRoom && _currentRoomCount >= _maxRoomCount)
         {
             foreach (WFC_Cell gridcell in _gridCopy)
@@ -412,12 +491,9 @@ public class WaveFunctionCollapse : MonoBehaviour
                 gridcell.options = new List<int> { 0 };
                 gridcell.collapsed = true;
             }
-
-            //cell.options = new List<int> { 0 };
-            //cell.collapsed = true;
         }
 
-        Debug.Log("[COLLAPSE CELL] Room " + _currentRoomCount + " type: " + _latestRoomType);
+        //Debug.Log("[COLLAPSE CELL] Room " + _currentRoomCount + " type: " + _latestRoomType);
     }
 
     private int DetermineRoomType()
@@ -425,22 +501,64 @@ public class WaveFunctionCollapse : MonoBehaviour
         int roomIndex = 1;
         bool validRoom = false;
 
-        Debug.Log("[DetermineRoomType] Safe rooms positions: " + _safeRoomPositions.Length);
+        //Debug.Log("[DetermineRoomType] Safe rooms positions: " + _safeRoomPositions.Length);
 
-        if (!validRoom && _currentRoomCount < _maxRoomCount - 1)
+        if(!validRoom && _currentRoomCount < _maxRoomCount - 1)
         {
-            if(_safeRoomPositions.Contains(_currentRoomCount))
+            // TRUE BRANCH
+            // Do this if true branch isnt done yet
+            if (_branchRoomCount[_trueBranchDirection] < _maxTrueBranchRoomCount)
             {
-                roomIndex = (int)PickSafeRoomType();
-                _safeRoomPositions = _safeRoomPositions.Where(val => val != _currentRoomCount).ToArray();
-            }
-            else
-            {
-                roomIndex = (int)RoomType.Enemy;
-            }
+                // We ran out of empty rooms, just generate enemy rooms
+                if(_currentSafeRoomCount >= _maxSafeRoomCount)
+                {
+                    roomIndex = (int)RoomType.Enemy;
+                    _trueRoomsSinceSafe++;
+                }
 
-            Debug.Log("[DetermineRoomType] Roomindex: " + roomIndex);
-            validRoom = ValidateRoomType(roomIndex);
+                // If it hasnt been _safeRoomGaps amount of rooms
+                // Set as enemy
+                else if (_trueRoomsSinceSafe < _safeRoomGaps)
+                {
+                    roomIndex = (int)RoomType.Enemy;
+                    _trueRoomsSinceSafe++;
+                }
+                // Set as safe room
+                else
+                {
+                    roomIndex = (int)PickSafeRoomType();
+                    _trueRoomsSinceSafe = 0;
+                }
+
+                validRoom = ValidateRoomType(roomIndex);
+            }
+            // DEAD BRANCH
+            // Do this if true branch is done
+            else if(_branchRoomCount[_deadBranchDirection] < _maxDeadBranchRoomCount)
+            {
+                // We ran out of empty rooms, just generate enemy rooms
+                if (_currentSafeRoomCount >= _maxSafeRoomCount)
+                {
+                    roomIndex = (int)RoomType.Enemy;
+                    _trueRoomsSinceSafe++;
+                }
+
+                // If it hasnt been _safeRoomGaps amount of rooms
+                // Set as enemy
+                else if (_deadRoomsSinceSafe < _safeRoomGaps)
+                {
+                    roomIndex = (int)RoomType.Enemy;
+                    _deadRoomsSinceSafe++;
+                }
+                // Set as safe room
+                else
+                {
+                    roomIndex = (int)PickSafeRoomType();
+                    _deadRoomsSinceSafe = 0;
+                }
+
+                validRoom = ValidateRoomType(roomIndex);
+            }
         }
 
         return roomIndex;
@@ -450,13 +568,13 @@ public class WaveFunctionCollapse : MonoBehaviour
     {
         switch (roomIndex)
         {
-            case 1: _latestRoomType = RoomType.Empty; _currentEmptyRoomCount++; return true;
+            case 1: _latestRoomType = RoomType.Empty; _currentEmptyRoomCount++; _currentSafeRoomCount++; return true;
             case 2: _latestRoomType = RoomType.Enemy; _currentEnemyRoomCount++; return true;
-            case 3: _latestRoomType = RoomType.Treasure; _currentTreasureRoomCount++; return true;
-            case 4: _latestRoomType = RoomType.Puzzle; _currentPuzzleRoomCount++; return true;
-            case 5: _latestRoomType = RoomType.Trap; _currentTrapRoomCount++; return true;
-            case 6: _latestRoomType = RoomType.Shop; _currentShopRoomCount++; return true;
-            default: Debug.LogError("CollapseCell: Error when choosing room type"); return false;
+            case 3: _latestRoomType = RoomType.Treasure; _currentTreasureRoomCount++; _currentSafeRoomCount++; return true;
+            case 4: _latestRoomType = RoomType.Puzzle; _currentPuzzleRoomCount++; _currentSafeRoomCount++; return true;
+            case 5: _latestRoomType = RoomType.Trap; _currentTrapRoomCount++; _currentSafeRoomCount++; return true;
+            case 6: _latestRoomType = RoomType.Shop; _currentShopRoomCount++; _currentSafeRoomCount++; return true;
+            default: Debug.LogError("CollapseCell: Error when choosing room type"); somethingFuckedUp = true; return false;
         }
     }
 
@@ -516,65 +634,40 @@ public class WaveFunctionCollapse : MonoBehaviour
     // Pick the safe room type
     private RoomType PickSafeRoomType()
     {
-        RoomType result = RoomType.Wall;
-        int[] choices = new int[] { (int)RoomType.Empty, (int)RoomType.Treasure, (int)RoomType.Puzzle, (int)RoomType.Trap, (int)RoomType.Shop};
+        int maxTries = 10;
+        int tries = 0;
 
-        // Keep repeating until a valid room type is obtained
-        while(result == RoomType.Wall)
+        var roomCounts = new Dictionary<RoomType, int>
         {
-            int index = UnityEngine.Random.Range(0, choices.Length);
+            { RoomType.Empty, _currentEmptyRoomCount },
+            { RoomType.Puzzle, _currentPuzzleRoomCount },
+            { RoomType.Trap, _currentTrapRoomCount },
+            { RoomType.Shop, _currentShopRoomCount }
+        };
+        var maxRoomCounts = new Dictionary<RoomType, int>
+        {
+            { RoomType.Empty, _maxEmptyRoomCount },
+            { RoomType.Puzzle, _maxPuzzleRoomCount },
+            { RoomType.Trap, _maxTrapRoomCount },
+            { RoomType.Shop, _maxShopRoomCount }
+        };
+        var choices = new[] { RoomType.Empty, RoomType.Puzzle, RoomType.Trap, RoomType.Shop };
 
-            switch (choices[index])
+        RoomType result = RoomType.Wall;
+
+        while (result == RoomType.Wall)
+        {
+            var index = UnityEngine.Random.Range(0, choices.Length);
+            var roomType = choices[index];
+            if (roomCounts[roomType] < maxRoomCounts[roomType])
             {
-                case (int)RoomType.Empty:
-                    if (_currentEmptyRoomCount >= _maxEmptyRoomCount)
-                    {
-                        continue;
-                    }
-
-                    result = RoomType.Empty;
-                    break;
-
-                case (int)RoomType.Treasure:
-                    if(_currentTreasureRoomCount >= _maxTreasureRoomCount)
-                    {
-                        continue;
-                    }
-
-                    result = RoomType.Treasure;
-                    break;
-
-                case (int)RoomType.Puzzle:
-                    if(_currentPuzzleRoomCount >= _maxPuzzleRoomCount)
-                    {
-                        continue;
-                    }
-
-                    result = RoomType.Puzzle;
-                    break;
-
-                case (int)RoomType.Trap:
-                    if (_currentTrapRoomCount >= _maxTrapRoomCount)
-                    {
-                        continue;
-                    }
-
-                    result = RoomType.Trap;
-                    break;
-
-                case (int)RoomType.Shop:
-                    if (_currentShopRoomCount >= _maxShopRoomCount)
-                    {
-                        continue;
-                    }
-
-                    result = RoomType.Shop;
-                    break;
+                result = roomType;
             }
 
-            // If a valid room type is found, break out of the loop
-            if (result != RoomType.Wall)
+            if(tries++ > maxTries)
             {
+                Debug.LogError("[PickSafeRoomType] Max tries reached, setting room to enemy");
+                result = RoomType.Enemy;
                 break;
             }
         }
@@ -588,35 +681,19 @@ public class WaveFunctionCollapse : MonoBehaviour
     }
 
     private void CreateInitialBranches() {
-        // Get the total branch count
-        var weights = new (int, int)[]
-        {
-               (2, 15),
-               (3, 50),
-               (4, 35) // hapus
-        };
-        var rng = new WeightedRNG(weights);
-        int result = rng.GetRandomIntItem();
+        // Create initial index array
+        List<int> directions = new List<int> { 0, 1, 2, 3 };
 
-        // Check if the result is less than 4
-        // Activate only a certain amount of branches
-        if(result < 4) {
-            // Choose which branches are going to be made randomly
-            int[] newbranches = ChooseRandomElements<int>(new int[4] { 0, 1, 2, 3 }, result);
+        // Create true branch
+        int trueIndex = UnityEngine.Random.Range(0, directions.Count);
+        _activeBranches[trueIndex] = true;
+        _trueBranchDirection = trueIndex;
+        directions.Remove(trueIndex);
 
-            // Activate em
-            foreach(int branch in newbranches) {
-                _activeBranches[branch] = true;
-            }
-        }
-        // If result is 4
-        // Activate every branch
-        else {
-            for(int i = 0; i < _activeBranches.Length; i++) {
-                _activeBranches[i] = true;
-            }
-        }
-
+        // Create dead branch
+        int deadIndex = UnityEngine.Random.Range(0, directions.Count);
+        _activeBranches[deadIndex] = true;
+        _deadBranchDirection = deadIndex;
     }
 
     private T[] ChooseRandomElements<T>(T[] arr, int count) {
@@ -638,6 +715,7 @@ public class WaveFunctionCollapse : MonoBehaviour
             if(i > maxDirectionRetries) 
             {
                 Debug.Log("[ChooseBranch] Max tries reached");
+                somethingFuckedUp = true;
                 break;
             }
 
@@ -668,6 +746,7 @@ public class WaveFunctionCollapse : MonoBehaviour
             if (i > maxDirectionRetries)
             {
                 Debug.LogWarning("[SearchForNewDirections] Max tries reached");
+                somethingFuckedUp = true;
                 break;
             }
 
@@ -895,6 +974,25 @@ public class WaveFunctionCollapse : MonoBehaviour
 
         Debug.Log("[AdvanceStep] Continue WFC");
         PerformWaveFunctionCollapse();
+    }
+
+    private void CheckIfSomethingFuckedUp()
+    {
+        if(somethingFuckedUp)
+        {
+            Debug.LogError("Something Fucked Up");
+            somethingFuckedUp = false;
+
+            // Restart WFC
+            DestroyYounglings();
+
+            CreateTiles();
+            GenerateAdjacencyRules();
+            InitializeGrid();
+            CreateInitialBranches();
+
+            PerformWaveFunctionCollapse();
+        }
     }
 }
 

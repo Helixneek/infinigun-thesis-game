@@ -22,8 +22,15 @@ public class LevelConfigSO : ScriptableObject
     [Tooltip("Number where medium rooms will stop spawning and hard rooms will spawn instead")]
     public int mediumRoomBreakoff;
 
+    [Header("Branch")]
+    public int trueBranchLength;
+    public int deadBranchLength;
 
     [Header("Rooms")]
+    [Tooltip("Number of enemy rooms between safe rooms")]
+    public int safeRoomGaps;
+
+    [Space]
     public int maxRoomCount;
     public int maxEnemyCount;
     public int maxTreasureCount;

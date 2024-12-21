@@ -16,11 +16,10 @@ MonoBehaviour:
   - {fileID: 707821585043276988, guid: 5324a296d21c8814fb08fa096132e892, type: 3}
   easyEnemyRoomLayouts:
   - {fileID: 807262058460857537, guid: 810492e5c83a748488a5881da7e4ab48, type: 3}
-  - {fileID: 5732553692763181364, guid: 30ba3f89c53cc5e44a5fa616dff9931d, type: 3}
   mediumEnemyRoomLayouts:
   - {fileID: 8859346890994853234, guid: aa1826367ec53394293113b3e6e44378, type: 3}
   hardEnemyRoomLayouts:
-  - {fileID: 7354396118311316642, guid: f93f1f3b2db1ee248823e47d38bd75ff, type: 3}
+  - {fileID: 5925077272352917967, guid: ccae444c4222b14418081891bc306d9a, type: 3}
   treasureRoomLayouts:
   - {fileID: 7809821315698143843, guid: 7830495fb6d55e4468140116a47d6970, type: 3}
   puzzleRoomLayouts:

@@ -1,0 +1,156 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5563362640833156942
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5700072656482985237}
+  - component: {fileID: 2162661818783765918}
+  - component: {fileID: 6856582494860247759}
+  - component: {fileID: 1099707581531902635}
+  - component: {fileID: 7965564242154549661}
+  m_Layer: 0
+  m_Name: WFC Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5700072656482985237
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5563362640833156942}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2162661818783765918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5563362640833156942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 318fdba8dee878f4c863bf99b9e31181, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelConfigFile: {fileID: 11400000, guid: 8e4d2ecdcba53d84a9546f845a24e6d8, type: 2}
+  roomPositioner: {fileID: 7965564242154549661}
+  roomDrawer: {fileID: 6856582494860247759}
+  maxWFCRetries: 10
+  tileTemplates:
+  - name: Wall
+    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
+    up: A
+    right: A
+    down: A
+    left: A
+  - name: Empty
+    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
+    up: A
+    right: A
+    down: A
+    left: A
+  - name: Enemy
+    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
+    up: A
+    right: A
+    down: A
+    left: A
+  - name: Treasure
+    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
+    up: A
+    right: A
+    down: A
+    left: A
+  - name: Puzzle
+    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
+    up: A
+    right: A
+    down: A
+    left: A
+  - name: Trap
+    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
+    up: A
+    right: A
+    down: A
+    left: A
+  - name: Shop
+    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
+    up: A
+    right: A
+    down: A
+    left: A
+  - name: Boss
+    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
+    up: A
+    right: A
+    down: A
+    left: A
+  dimension: 10
+  gridParent: {fileID: 0}
+  startFromCenter: 1
+  maxDirectionRetries: 50
+  maxBranchRetries: 50
+  generateWallRooms: 0
+  isDebug: 0
+--- !u!114 &6856582494860247759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5563362640833156942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2376fafd5198f5647ba9c69081f615f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelConfig: {fileID: 11400000, guid: 8e4d2ecdcba53d84a9546f845a24e6d8, type: 2}
+  roomPrefab: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
+  doorPrefab: {fileID: -6292474026939093430, guid: 1007f522d42915e4d874f932c97aa7dc, type: 3}
+  doorSpawnPositions:
+  - {x: 0, y: 6.5}
+  - {x: 13.5, y: 0}
+  - {x: 0, y: -6.5}
+  - {x: -13.5, y: 0}
+  tileWidth: 32
+  tileHeight: 18
+  roomObjects: []
+--- !u!114 &1099707581531902635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5563362640833156942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 444a655b37359e04497de308f2489a84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7965564242154549661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5563362640833156942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cb3153009b3b1442bc04965bb89c674, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

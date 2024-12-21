@@ -150,10 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerClone: {fileID: 0}
   levelID: 0
-  permaDamageLevel: 0
-  permaFireRateLevel: 0
-  permaMaxAmmoLevel: 0
-  permaReloadSpeedLevel: 0
+  Gems: 0
 --- !u!4 &15955724
 Transform:
   m_ObjectHideFlags: 0
@@ -815,146 +812,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1553448948
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1553448950}
-  - component: {fileID: 1553448949}
-  - component: {fileID: 1553448952}
-  - component: {fileID: 1553448951}
-  m_Layer: 0
-  m_Name: WFC Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1553448949
+--- !u!114 &1553448949 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 2162661818783765918, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+  m_PrefabInstance: {fileID: 777367596973962857}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1553448948}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 318fdba8dee878f4c863bf99b9e31181, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelConfigFile: {fileID: 11400000, guid: 8e4d2ecdcba53d84a9546f845a24e6d8, type: 2}
-  roomPositioner: {fileID: 1553448951}
-  roomDrawer: {fileID: 1553448952}
-  maxWFCRetries: 10
-  tileTemplates:
-  - name: Wall
-    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
-    up: A
-    right: A
-    down: A
-    left: A
-  - name: Empty
-    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
-    up: A
-    right: A
-    down: A
-    left: A
-  - name: Enemy
-    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
-    up: A
-    right: A
-    down: A
-    left: A
-  - name: Treasure
-    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
-    up: A
-    right: A
-    down: A
-    left: A
-  - name: Puzzle
-    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
-    up: A
-    right: A
-    down: A
-    left: A
-  - name: Trap
-    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
-    up: A
-    right: A
-    down: A
-    left: A
-  - name: Shop
-    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
-    up: A
-    right: A
-    down: A
-    left: A
-  - name: Boss
-    roomData: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
-    up: A
-    right: A
-    down: A
-    left: A
-  dimension: 10
-  gridParent: {fileID: 69419481}
-  startFromCenter: 1
-  maxDirectionRetries: 50
-  maxBranchRetries: 50
-  generateWallRooms: 0
-  isDebug: 0
---- !u!4 &1553448950
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1553448948}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1553448951
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1553448948}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4cb3153009b3b1442bc04965bb89c674, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1553448952
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1553448948}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2376fafd5198f5647ba9c69081f615f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  levelConfig: {fileID: 11400000, guid: 8e4d2ecdcba53d84a9546f845a24e6d8, type: 2}
-  roomPrefab: {fileID: 7882490029570301359, guid: 0d78af5b3f6530442808267cef8d423d, type: 3}
-  doorPrefab: {fileID: -6292474026939093430, guid: 1007f522d42915e4d874f932c97aa7dc, type: 3}
-  doorSpawnPositions:
-  - {x: 0, y: 6.5}
-  - {x: 13.5, y: 0}
-  - {x: 0, y: -6.5}
-  - {x: -13.5, y: 0}
-  tileWidth: 32
-  tileHeight: 18
 --- !u!1 &1904696543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1031,7 +899,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
+  m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -1326,6 +1194,75 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1981743583}
   m_CullTransparentMesh: 1
+--- !u!1001 &777367596973962857
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2162661818783765918, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: gridParent
+      value: 
+      objectReference: {fileID: 69419481}
+    - target: {fileID: 2162661818783765918, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: levelConfigFile
+      value: 
+      objectReference: {fileID: 11400000, guid: 8e4d2ecdcba53d84a9546f845a24e6d8, type: 2}
+    - target: {fileID: 5563362640833156942, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: m_Name
+      value: WFC Manager
+      objectReference: {fileID: 0}
+    - target: {fileID: 5700072656482985237, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5700072656482985237, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5700072656482985237, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5700072656482985237, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5700072656482985237, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5700072656482985237, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5700072656482985237, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5700072656482985237, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5700072656482985237, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5700072656482985237, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6856582494860247759, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
+      propertyPath: levelConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 8e4d2ecdcba53d84a9546f845a24e6d8, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7ee28d2000bfe1a44b5005e670010e88, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1335,7 +1272,7 @@ SceneRoots:
   - {fileID: 1247359701}
   - {fileID: 1135479707}
   - {fileID: 517481241}
-  - {fileID: 1553448950}
+  - {fileID: 777367596973962857}
   - {fileID: 695411498}
   - {fileID: 15955724}
   - {fileID: 262843448}

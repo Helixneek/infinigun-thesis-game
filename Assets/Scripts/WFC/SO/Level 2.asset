@@ -18,11 +18,14 @@ MonoBehaviour:
   easyRooms: 1
   mediumRooms: 1
   hardRooms: 0
-  easyRoomBreakoff: 8
+  easyRoomBreakoff: 6
   mediumRoomBreakoff: 4
+  trueBranchLength: 12
+  deadBranchLength: 5
+  safeRoomGaps: 2
   maxRoomCount: 18
-  maxEnemyCount: 12
+  maxEnemyCount: 11
   maxTreasureCount: 1
   maxPuzzleCount: 1
-  maxTrapCount: 1
+  maxTrapCount: 0
   maxShopCount: 1

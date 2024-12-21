@@ -7,6 +7,7 @@ public class NextFloorTrigger : TriggerInteractionBase
     public int nextFloor;
 
     public bool isLocked = true;
+    public bool finalFloor = false;
 
     private void Start()
     {
@@ -18,12 +19,28 @@ public class NextFloorTrigger : TriggerInteractionBase
     {
         if(isLocked) return;
 
-        // Replace player object reference in singleton
-        PlayerDataManager.Instance.ReplacePlayerClone(Player);
+        // Set player gems in the singleton
+        PlayerDataManager.Instance.Gems = Player.GetComponent<PlayerWallet>().Gems;
 
-        // Increment level id
-        PlayerDataManager.Instance.levelID++;
+        if (finalFloor)
+        {
+            // Delete player object
+            PlayerDataManager.Instance.DeletePlayerClone();
 
-        SceneManager.LoadScene(nextFloor);
+            // This is supposed to be a "You Win!" scene
+            SceneManager.LoadScene(7);
+        }
+        else
+        {
+            // Replace player object reference in singleton
+            PlayerDataManager.Instance.ReplacePlayerClone(Player);
+
+            // Increment level id
+            PlayerDataManager.Instance.levelID++;
+
+            // Load next floor
+            SceneManager.LoadScene(nextFloor);
+        }
+        
     }
 }

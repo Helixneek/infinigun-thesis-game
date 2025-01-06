@@ -1,9 +1,15 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
+    [Header("Level Select")]
+    [SerializeField] private Slider levelSlider;
+    [SerializeField] private TextMeshProUGUI buttonText;
+
+    [Header("Gems")]
     [SerializeField] private TextMeshProUGUI gemsText;
 
     private void Start()
@@ -11,11 +17,21 @@ public class MainMenu : MonoBehaviour
         SetGemsText();
     }
 
+    public void OnSliderChange()
+    {
+        buttonText.text = "START FROM LEVEL " + levelSlider.value;
+    }
+
+    public void ChooseLevel()
+    {
+        SceneManager.LoadScene("Level " + levelSlider.value);
+    }
+
     private void SetGemsText()
     {
         if(PlayerDataManager.Instance != null)
         {
-            gemsText.text = PlayerDataManager.Instance.Gems.ToString();
+            gemsText.text = PlayerDataManager.Instance.TotalGems.ToString();
             gemsText.fontSize = 60;
         }
         else

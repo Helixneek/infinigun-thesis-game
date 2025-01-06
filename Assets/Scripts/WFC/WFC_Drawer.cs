@@ -14,6 +14,10 @@ public class WFC_Drawer : MonoBehaviour
     [SerializeField] private int tileWidth;
     [SerializeField] private int tileHeight;
 
+    [Header("Enemies")]
+    [SerializeField] private bool isAlternating;
+    [SerializeField] private int maxAlternatingCount;
+
     private GemDistributor gemDistributor;
 
     private int _dimension;
@@ -28,9 +32,16 @@ public class WFC_Drawer : MonoBehaviour
     // Difficulty parameters
     private int _maxEasyRooms = 0;
     private int _maxMediumRooms = 0;
+    private int _maxHardRooms = 0;
 
     private int _easyRoomCount = 0;
     private int _mediumRoomCount = 0;
+    private int _hardRoomCount = 0;
+
+    // Enemies
+    private int _currentAlternatingCount = 0;
+    private EnemyDifficulty _lastDifficulty;
+    private EnemyDifficulty _minDifficulty;
 
     private void Awake()
     {
@@ -51,6 +62,19 @@ public class WFC_Drawer : MonoBehaviour
         {
             _maxMediumRooms = levelConfig.mediumRoomBreakoff;
         }
+        
+        // Get the min difficulty
+        if(levelConfig.easyRooms)
+        {
+            _minDifficulty = EnemyDifficulty.Easy;
+        }
+        else if(levelConfig.mediumRooms)
+        {
+            _minDifficulty = EnemyDifficulty.Medium;
+        }
+
+        _lastDifficulty = levelConfig.easyRooms ? EnemyDifficulty.Easy : EnemyDifficulty.Medium;
+        _maxHardRooms = levelConfig.maxEnemyCount - _maxMediumRooms;
     }
 
     public void StartDrawer(int dimension, List<WFC_Cell> grid, WFC_Cell fcell, Transform gridparent)
@@ -75,7 +99,7 @@ public class WFC_Drawer : MonoBehaviour
         CreateDoors();
 
         // Add the gem
-        gemDistributor.AssignGemToEnemy();
+        //gemDistributor.AssignGemToEnemy();
     }
 
     private void DrawCellTiles()
@@ -97,7 +121,7 @@ public class WFC_Drawer : MonoBehaviour
                     // Add an empty room and dont give an ID (it'll be -1)
                     if (cell.options[0] == (int)RoomType.Wall)
                     {
-                        RoomCreator empty = null;
+                        RoomCreator empty = new RoomCreator();
                         roomObjects.Add(empty);
 
                         continue;
@@ -113,25 +137,7 @@ public class WFC_Drawer : MonoBehaviour
                     // Set the difficulty if the room is an enemy room
                     if (cell.options[0] == (int)RoomType.Enemy)
                     {
-                        if(levelConfig.easyRooms && _easyRoomCount <= _maxEasyRooms)
-                        {
-                            obj.EnemyDifficulty = EnemyDifficulty.Easy;
-                            _easyRoomCount++;
-                        }
-                        else if(levelConfig.mediumRooms && _mediumRoomCount <= _maxMediumRooms)
-                        {
-                            obj.EnemyDifficulty = EnemyDifficulty.Medium;
-                            _mediumRoomCount++;
-                        }
-                        else if(levelConfig.hardRooms)
-                        {
-                            obj.EnemyDifficulty = EnemyDifficulty.Hard;
-                        }
-                        else
-                        {
-                            obj.EnemyDifficulty = EnemyDifficulty.Easy;
-                            _easyRoomCount++;
-                        }
+                        AssignEnemyDifficulty(obj);
                     }
 
                     // Add room object to the list
@@ -207,6 +213,99 @@ public class WFC_Drawer : MonoBehaviour
         return roomType;
     }
 
+    private void AssignEnemyDifficulty(RoomCreator obj)
+    {
+        // If its alternating, use that rule
+        if (isAlternating)
+        {
+            EnemyDifficulty nextDifficulty = GetNextDifficulty(_lastDifficulty);
+            if (IsValidDifficulty(nextDifficulty))
+            {
+                obj.EnemyDifficulty = nextDifficulty;
+                _lastDifficulty = nextDifficulty;
+                IncrementRoomCount(nextDifficulty);
+                _currentAlternatingCount++;
+            }
+            else
+            {
+                obj.EnemyDifficulty = _minDifficulty;
+            }
+        }
+        else
+        {
+            EnemyDifficulty difficulty = GetDefaultDifficulty();
+            if (IsValidDifficulty(difficulty))
+            {
+                obj.EnemyDifficulty = difficulty;
+                _lastDifficulty = difficulty;
+                IncrementRoomCount(difficulty);
+            }
+        }
+    }
+
+    private EnemyDifficulty GetNextDifficulty(EnemyDifficulty currentDifficulty)
+    {
+        if (_currentAlternatingCount < maxAlternatingCount)
+        {
+            return currentDifficulty;
+        }
+        else
+        {
+            _currentAlternatingCount = 0;
+
+            switch (currentDifficulty)
+            {
+                case EnemyDifficulty.Easy:
+                    return EnemyDifficulty.Medium;
+                case EnemyDifficulty.Medium:
+                    return levelConfig.hardRooms ? EnemyDifficulty.Hard : EnemyDifficulty.Easy;
+                case EnemyDifficulty.Hard:
+                    return EnemyDifficulty.Medium;
+                default:
+                    return EnemyDifficulty.Easy;
+            }
+        }
+    }
+
+    private EnemyDifficulty GetDefaultDifficulty()
+    {
+        if (levelConfig.easyRooms && _easyRoomCount <= _maxEasyRooms) return EnemyDifficulty.Easy;
+        if (levelConfig.mediumRooms && _mediumRoomCount <= _maxMediumRooms) return EnemyDifficulty.Medium;
+        if (levelConfig.hardRooms) return EnemyDifficulty.Hard;
+        return EnemyDifficulty.Easy;
+    }
+
+    private bool IsValidDifficulty(EnemyDifficulty difficulty)
+    {
+        switch (difficulty)
+        {
+            case EnemyDifficulty.Easy:
+                return levelConfig.easyRooms && _easyRoomCount <= _maxEasyRooms;
+            case EnemyDifficulty.Medium:
+                return levelConfig.mediumRooms && _mediumRoomCount <= _maxMediumRooms;
+            case EnemyDifficulty.Hard:
+                return levelConfig.hardRooms;
+            default:
+                return false;
+        }
+    }
+
+    private void IncrementRoomCount(EnemyDifficulty difficulty)
+    {
+        switch (difficulty)
+        {
+            case EnemyDifficulty.Easy:
+                _easyRoomCount++;
+                break;
+            case EnemyDifficulty.Medium:
+                _mediumRoomCount++;
+                break;
+            case EnemyDifficulty.Hard:
+                _hardRoomCount++;
+                break;
+        }
+    }
+
     private void CreateDoors()
     {
         int _roomIndex = _totalRoomIndex; 
@@ -227,13 +326,14 @@ public class WFC_Drawer : MonoBehaviour
                 // Make sure that wall rooms are skipped
                 if (cell != null && cell.collapsed && cell.options[0] != (int)RoomType.Wall)
                 {
+                    Debug.Log($"Assigning door objects for Room (x: {i}, y: {j})");
+
                     // Check each direction
                     // UP
                     if ((j + 1) < _dimension 
                         && _grid[i + (j + 1) * _dimension] != null 
                         && _grid[i + (j + 1) * _dimension].collapsed
-                        && _grid[i + (j + 1) * _dimension].options[0] != (int)RoomType.Wall
-                        && _grid[i + (j + 1) * _dimension].options[0] != (int)RoomType.Boss)
+                        && _grid[i + (j + 1) * _dimension].options[0] != (int)RoomType.Wall)
                     {
                         DoorTriggerInteraction door = Instantiate(doorPrefab, new Vector2(doorSpawnPositions[0].x + (i * tileWidth), doorSpawnPositions[0].y + (j * tileHeight)), Quaternion.identity);
                         door.gameObject.name = $"Up Door {i} {j}";
@@ -248,8 +348,7 @@ public class WFC_Drawer : MonoBehaviour
                     if ((i + 1) < _dimension 
                         && _grid[(i + 1) + j * _dimension] != null 
                         && _grid[(i + 1) + j * _dimension].collapsed
-                        && _grid[(i + 1) + j * _dimension].options[0] != (int)RoomType.Wall
-                        && _grid[(i + 1) + j * _dimension].options[0] != (int)RoomType.Boss)
+                        && _grid[(i + 1) + j * _dimension].options[0] != (int)RoomType.Wall)
                     {
                         DoorTriggerInteraction door = Instantiate(doorPrefab, new Vector2(doorSpawnPositions[1].x + (i * tileWidth), doorSpawnPositions[1].y + (j * tileHeight)), Quaternion.Euler(0, 0, 270));
                         door.gameObject.name = $"Right Door {i} {j}";
@@ -263,8 +362,7 @@ public class WFC_Drawer : MonoBehaviour
                     if ((j - 1) >= 0
                         && _grid[i + (j - 1) * _dimension] != null 
                         && _grid[i + (j - 1) * _dimension].collapsed
-                        && _grid[i + (j - 1) * _dimension].options[0] != (int)RoomType.Wall
-                        && _grid[i + (j - 1) * _dimension].options[0] != (int)RoomType.Boss)
+                        && _grid[i + (j - 1) * _dimension].options[0] != (int)RoomType.Wall)
                     {
                         DoorTriggerInteraction door = Instantiate(doorPrefab, new Vector2(doorSpawnPositions[2].x + (i * tileWidth), doorSpawnPositions[2].y + (j * tileHeight)), Quaternion.Euler(0, 0, 180));
                         door.gameObject.name = $"Down Door {i} {j}";
@@ -278,8 +376,7 @@ public class WFC_Drawer : MonoBehaviour
                     if ((i - 1) >= 0 
                         && _grid[(i - 1) + j * _dimension] != null 
                         && _grid[(i - 1) + j * _dimension].collapsed 
-                        && _grid[(i - 1) + j * _dimension].options[0] != (int)RoomType.Wall
-                        && _grid[(i - 1) + j * _dimension].options[0] != (int)RoomType.Boss)
+                        && _grid[(i - 1) + j * _dimension].options[0] != (int)RoomType.Wall)
                     {
                         DoorTriggerInteraction door = Instantiate(doorPrefab, new Vector2(doorSpawnPositions[3].x + (i * tileWidth), doorSpawnPositions[3].y + (j * tileHeight)), Quaternion.Euler(0, 0, 90));
                         door.gameObject.name = $"Left Door {i} {j}";
@@ -299,13 +396,19 @@ public class WFC_Drawer : MonoBehaviour
                 
             }
         }
+
+        // Add the gem
+        gemDistributor.AssignGemToEnemy();
     }
 
     private void AssignDoorValues(int x, int y)
     {
+        Debug.Log($"Assigning door values for Room (x: {x}, y: {y})");
+
         // Check for each direction
         // UP
-        if((y + 1) < _dimension
+        if ((y + 1) >= 0
+            && (y + 1) < _dimension
             && _grid[x + (y + 1) * _dimension] != null
             && _grid[x + (y + 1) * _dimension].collapsed
             && _grid[x + (y + 1) * _dimension].options[0] != (int)RoomType.Wall
@@ -319,7 +422,8 @@ public class WFC_Drawer : MonoBehaviour
         }
 
         // RIGHT
-        if((x + 1) < _dimension
+        if((x + 1) >= 0
+            && (x + 1) < _dimension
             && _grid[(x + 1) + y * _dimension] != null
             && _grid[(x + 1) + y * _dimension].collapsed
             && _grid[(x + 1) + y * _dimension].options[0] != (int)RoomType.Wall

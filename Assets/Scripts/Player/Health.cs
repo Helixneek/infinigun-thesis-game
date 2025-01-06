@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Health : MonoBehaviour, IDamageable
@@ -6,11 +7,14 @@ public class Health : MonoBehaviour, IDamageable
     [SerializeField] private float maxHealth = 5f;
     [SerializeField] private Slider healthSlider;
 
-    private float _currentHealth;
+    private float _currentHealth = 0;
 
     private void Start()
     {
-        _currentHealth = maxHealth;
+        if(_currentHealth <= 0)
+        {
+            _currentHealth = maxHealth;
+        }
 
         healthSlider.maxValue = maxHealth;
         healthSlider.value = _currentHealth;
@@ -37,6 +41,7 @@ public class Health : MonoBehaviour, IDamageable
             // Player dies
             // Start game over
             Debug.Log("GAME OVER");
+            SceneManager.LoadScene("Game Over");
         }
     }
 

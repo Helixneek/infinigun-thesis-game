@@ -3,9 +3,15 @@ using UnityEngine;
 
 public class ShopPedestal : TriggerInteractionBase
 {
+    [Header("Shop Pedestal")]
     [SerializeField] private UpgradeList upgradeList;
     [SerializeField] private SpriteRenderer itemSprite;
     [SerializeField] private TextMeshProUGUI upgradePrice;
+
+    [Header("Prices")]
+    [SerializeField] private int tier0Price = 7;
+    [SerializeField] private int tier1Price = 15;
+    //[SerializeField] private int tier2Price = 30;
 
     private GunUpgrade _upgrade;
     private int _price;
@@ -61,11 +67,11 @@ public class ShopPedestal : TriggerInteractionBase
         switch(_upgrade.upgradeTier)
         {
             case 0:
-                _price = 15;
+                _price = tier0Price;
                 break;
 
             case 1:
-                _price = 30;
+                _price = tier1Price;
                 break;
         }
     }

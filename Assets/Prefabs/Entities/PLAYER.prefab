@@ -1552,6 +1552,7 @@ GameObject:
   - component: {fileID: 4178414395855175647}
   - component: {fileID: 7755102067924514960}
   - component: {fileID: 6319840330788874369}
+  - component: {fileID: -2916167185437654850}
   m_Layer: 11
   m_Name: PLAYER
   m_TagString: Player
@@ -1628,7 +1629,7 @@ MonoBehaviour:
   upgradePanel: {fileID: 839244977797467276}
   upgradeName: {fileID: 523101124621716611}
   upgradeDescription: {fileID: 2293049398707309393}
-  panelDuration: 3
+  panelDuration: 1
   upgrades: []
   damageChange: 0
   fireRateChange: 0
@@ -1649,6 +1650,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coinsText: {fileID: 1174620965226254527}
   gemsText: {fileID: 1881790929492293965}
+  Coins: 0
+  Gems: 0
 --- !u!114 &2708030482096580729
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1661,7 +1664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8526ebe2c91279c44b90a1437d7d7773, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
+  maxHealth: 20
   healthSlider: {fileID: 4369109765914896434}
 --- !u!114 &4178414395855175647
 MonoBehaviour:
@@ -1749,6 +1752,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &-2916167185437654850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6208512450346080436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d251105b016fc7f47bb5d6b561231e92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6212700395275106068
 GameObject:
   m_ObjectHideFlags: 0

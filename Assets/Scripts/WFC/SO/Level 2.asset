@@ -19,7 +19,7 @@ MonoBehaviour:
   mediumRooms: 1
   hardRooms: 0
   easyRoomBreakoff: 6
-  mediumRoomBreakoff: 4
+  mediumRoomBreakoff: 10
   trueBranchLength: 12
   deadBranchLength: 5
   safeRoomGaps: 2

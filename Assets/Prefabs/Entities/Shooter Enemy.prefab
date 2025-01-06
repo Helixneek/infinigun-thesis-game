@@ -223,7 +223,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 739df8dd18b9bd34ba8b91aba2453cfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 6
+  enemySprite: {fileID: 8918974606461627764}
+  enemyWithGemColor: {r: 0.007843138, g: 0.909804, b: 0, a: 1}
+  maxHealth: 5
+  canDropCoins: 1
+  canDropGems: 0
+  canDropHearts: 1
   coinPrefab: {fileID: -2602986536865478353, guid: 156ec109636543c488d007452be15549, type: 3}
   coinSpread: 1
   maxCoinsDropped: 1

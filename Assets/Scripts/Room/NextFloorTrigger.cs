@@ -19,6 +19,9 @@ public class NextFloorTrigger : TriggerInteractionBase
     {
         if(isLocked) return;
 
+        // Set player coins
+        PlayerDataManager.Instance.Coins = Player.GetComponent<PlayerWallet>().Coins;
+
         // Set player gems in the singleton
         PlayerDataManager.Instance.Gems = Player.GetComponent<PlayerWallet>().Gems;
 

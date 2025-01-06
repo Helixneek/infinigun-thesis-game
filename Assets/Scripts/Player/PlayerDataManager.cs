@@ -10,7 +10,12 @@ public class PlayerDataManager : MonoBehaviour
     public int levelID;
 
     // Gem values
+    public int Coins = 0;
+
+    public int TotalGems = 0;
     public int Gems = 0;
+
+    public bool isFirst = true;
 
     // Gem buffs
     //public float permaDamageLevel = 0;
@@ -51,5 +56,12 @@ public class PlayerDataManager : MonoBehaviour
         // Turn off gameObject
         PlayerClone.SetActive(false);
 
+    }
+
+    public void SetTotalGems()
+    {
+        TotalGems += Gems;
+
+        Gems = 0;
     }
 }

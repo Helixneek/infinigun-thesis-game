@@ -22,6 +22,11 @@ public class RoomCreator : MonoBehaviour
     private RoomLayoutList _layoutList;
     private Transform _gridTransform;
 
+    public RoomCreator()
+    {
+
+    }
+
     public void SetupRoom(RoomType roomType)
     {
         this.roomType = roomType;

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour, IDamageable
 {
+    [SerializeField] private SpriteRenderer enemySprite;
+    [SerializeField] private Color enemyWithGemColor;
+
     [Header("Stats")]
     [SerializeField] private float maxHealth = 5f;
 
@@ -66,8 +69,8 @@ public class Enemy : MonoBehaviour, IDamageable
             // Get the random number
             var weights = new (int, int)[]
             {
-                   (1, 3), // Coins
-                   (2, 1) // Hearts
+                   (1, 80), // Coins
+                   (2, 20) // Hearts
             };
             var rng = new WeightedRNG(weights);
             int result = rng.GetRandomIntItem();
@@ -125,5 +128,10 @@ public class Enemy : MonoBehaviour, IDamageable
                 return spawnPoint;
             }
         }
+    }
+
+    public void ChangeColor()
+    {
+        enemySprite.color = enemyWithGemColor;
     }
 }
